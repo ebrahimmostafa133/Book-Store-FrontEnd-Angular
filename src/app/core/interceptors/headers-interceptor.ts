@@ -4,13 +4,14 @@ import {CookieService} from 'ngx-cookie-service'
 
 export const headersInterceptor: HttpInterceptorFn = (req, next) => {
   const cookieService = inject(CookieService)
-  if (cookieService.check('token')) {
-    req = req.clone({
-      setHeaders: {
-        token: cookieService.get('token'),
-      },
-    })
+  const token = cookieService.get('token')
+  let headers = req.headers
+
+  if (token) {
+    headers = headers.set('Authorization', `Bearer ${token}`)
   }
 
-  return next(req)
+  const authReq = req.clone({headers})
+
+  return next(authReq)
 }
