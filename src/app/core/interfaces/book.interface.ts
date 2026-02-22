@@ -1,14 +1,15 @@
+import type {Author} from './author.interface'
+import type {Category} from './category.interface'
+
 export interface Book {
-  _id?: string
+  id: string
   name: string
-  author: any // Can be string (ObjectId) or populated Author interface
-  category: any // Can be string (ObjectId) or populated Category interface
+  author: Author | string
+  category: Category | string
   price: number
-  description?: string
+  stock: number
   bookCover: string
-  stock?: number
+  description?: string
   averageRating?: number
   numReviews?: number
-  createdAt?: string
-  updatedAt?: string
 }

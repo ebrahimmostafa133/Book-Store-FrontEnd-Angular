@@ -1,1 +1,58 @@
-<p>manage-orders works!</p>
+<section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-4">
+  <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+    <h2 class="text-xl font-bold text-gray-800">Manage Orders</h2>
+  </div>
+
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    @if (isLoading) {
+      <div class="text-center py-8 text-gray-500">Loading orders...</div>
+    } @else {
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3">Order ID</th>
+            <th scope="col" class="px-6 py-3">User ID</th>
+            <th scope="col" class="px-6 py-3">Total Amount</th>
+            <th scope="col" class="px-6 py-3">Date</th>
+            <th scope="col" class="px-6 py-3">Status</th>
+            <th scope="col" class="px-6 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders; track order.id) {
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                {{ order.id }}
+              </td>
+              <td class="px-6 py-4 text-xs font-mono">
+                {{ order.user }}
+              </td>
+              <td class="px-6 py-4">
+                {{ order.totalAmount | currency }}
+              </td>
+              <td class="px-6 py-4">
+                {{ order.createdAt | date:'mediumDate' }}
+              </td>
+              <td class="px-6 py-4">
+                <select [value]="order.status" (change)="updateStatus(order.id, $event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                  @for (status of statusOptions; track status) {
+                    <option [value]="status">{{ status | titlecase }}</option>
+                  }
+                </select>
+              </td>
+              <td class="px-6 py-4">
+                <button (click)="deleteOrder(order.id)" class="font-medium text-red-600 hover:underline">Delete</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                No orders found.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>
