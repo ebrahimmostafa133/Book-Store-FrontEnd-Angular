@@ -10,6 +10,7 @@ export const routes: Routes = [
     path: '',
     component: AuthLayout,
     canActivate: [authGuard],
+    canActivateChild: [authGuard],
     children: [
       {path: '', redirectTo: 'home', pathMatch: 'full'},
       {path: 'home', loadComponent: () => import('./features/home/home').then(m => m.Home)},
@@ -25,19 +26,9 @@ export const routes: Routes = [
     ],
   },
   {
-    path: '',
-    component: UserLayout,
-    canActivate: [isLoggedGuard],
-    children: [
-      {path: 'login', loadComponent: () => import('./core/auth/login/login').then(m => m.Login)},
-      {path: 'register', loadComponent: () => import('./core/auth/register/register').then(m => m.Register)},
-      {path: 'not-found', loadComponent: () => import('./features/notfound/notfound').then(m => m.Notfound)},
-      {path: '**', redirectTo: 'not-found'},
-    ],
-  },
-  {
     path: 'admin',
     canActivate: [adminGuard],
+    canActivateChild: [adminGuard],
     loadComponent: () => import('./core/layout/admin-layout/admin-layout').then(m => m.AdminLayout),
     children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
@@ -48,4 +39,16 @@ export const routes: Routes = [
       {path: 'orders', loadComponent: () => import('./features/admin/manage-orders/manage-orders').then(m => m.ManageOrders)},
     ],
   },
+  {
+    path: '',
+    component: UserLayout,
+    canActivate: [isLoggedGuard],
+    canActivateChild: [isLoggedGuard],
+    children: [
+      {path: 'login', loadComponent: () => import('./core/auth/login/login').then(m => m.Login)},
+      {path: 'register', loadComponent: () => import('./core/auth/register/register').then(m => m.Register)},
+    ],
+  },
+  {path: 'not-found', loadComponent: () => import('./features/notfound/notfound').then(m => m.Notfound)},
+  {path: '**', redirectTo: 'not-found'},
 ]
