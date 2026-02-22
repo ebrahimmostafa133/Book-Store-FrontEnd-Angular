@@ -8,12 +8,6 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="p-8 space-y-4">
       
-      @if (errorMessage()) {
-        <div class="flex items-center gap-3 p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg">
-          <i class="fas fa-circle-exclamation text-lg"></i>
-          <span class="font-medium">{{ errorMessage() }}</span>
-        </div>
-      }
       <div class="space-y-1">
         <label class="text-sm font-medium text-gray-700">Email Address</label>
         <input type="email" formControlName="email" placeholder="name@company.com"
