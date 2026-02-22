@@ -1,1 +1,146 @@
-<p>manage-books works!</p>
+<section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-4">
+  <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+    <h2 class="text-xl font-bold text-gray-800">Manage Books</h2>
+    <button (click)="openModal()" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
+      Add Book
+    </button>
+  </div>
+
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3">Book Cover</th>
+          <th scope="col" class="px-6 py-3">Title</th>
+          <th scope="col" class="px-6 py-3">Author</th>
+          <th scope="col" class="px-6 py-3">Category</th>
+          <th scope="col" class="px-6 py-3">Price</th>
+          <th scope="col" class="px-6 py-3">Stock</th>
+          <th scope="col" class="px-6 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (book of books; track book.id) {
+          <tr class="bg-white border-b hover:bg-gray-50">
+            <td class="px-6 py-4">
+              @if (book.bookCover) {
+                <img [src]="book.bookCover" alt="{{ book.name }}" class="w-16 h-24 object-cover rounded">
+              } @else {
+                <div class="w-16 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                  No Cover
+                </div>
+              }
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              {{ book.name }}
+            </td>
+            <td class="px-6 py-4">
+              {{ getAuthorName(book.author) }}
+            </td>
+            <td class="px-6 py-4">
+              {{ getCategoryName(book.category) }}
+            </td>
+            <td class="px-6 py-4">
+              ${{ book.price }}
+            </td>
+            <td class="px-6 py-4">
+              {{ book.stock }}
+            </td>
+            <td class="px-6 py-4 flex gap-4">
+              <button (click)="openModal(book)" class="font-medium text-blue-600 hover:underline">Edit</button>
+              <button (click)="deleteBook(book.id)" class="font-medium text-red-600 hover:underline">Delete</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+              No books found.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+@if (isModalOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto bg-gray-900/50">
+    <div class="relative w-full max-w-2xl bg-white rounded-lg shadow">
+      <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+        <h3 class="text-lg font-semibold text-gray-900">
+          {{ editingBookId ? 'Edit Book' : 'Add Book' }}
+        </h3>
+        <button (click)="closeModal()" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+
+      <form [formGroup]="bookForm" (ngSubmit)="onSubmit()" class="p-4 md:p-5">
+        <div class="grid gap-4 mb-4 grid-cols-2">
+          <div class="col-span-2">
+            <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Title</label>
+            <input type="text" id="name" formControlName="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type book title">
+            @if (bookForm.get('name')?.invalid && bookForm.get('name')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Title is required (min 3 chars).</p>
+            }
+          </div>
+          <div>
+            <label for="author" class="block mb-2 text-sm font-medium text-gray-900">Author</label>
+            <select id="author" formControlName="author" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+              <option value="">Select Author</option>
+              @for (author of authors; track author.id) {
+                <option [value]="author.id">{{ author.name }}</option>
+              }
+            </select>
+            @if (bookForm.get('author')?.invalid && bookForm.get('author')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Author is required.</p>
+            }
+          </div>
+          <div>
+            <label for="category" class="block mb-2 text-sm font-medium text-gray-900">Category</label>
+            <select id="category" formControlName="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+              <option value="">Select Category</option>
+              @for (category of categories; track category.id) {
+                <option [value]="category.id">{{ category.name }}</option>
+              }
+            </select>
+            @if (bookForm.get('category')?.invalid && bookForm.get('category')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Category is required.</p>
+            }
+          </div>
+          <div>
+            <label for="price" class="block mb-2 text-sm font-medium text-gray-900">Price</label>
+            <input type="number" id="price" formControlName="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="0.00">
+            @if (bookForm.get('price')?.invalid && bookForm.get('price')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Price must be a positive number.</p>
+            }
+          </div>
+          <div>
+            <label for="stock" class="block mb-2 text-sm font-medium text-gray-900">Stock</label>
+            <input type="number" id="stock" formControlName="stock" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="0">
+            @if (bookForm.get('stock')?.invalid && bookForm.get('stock')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Stock must be a non-negative integer.</p>
+            }
+          </div>
+          <div class="col-span-2">
+            <label for="bookCover" class="block mb-2 text-sm font-medium text-gray-900">Book Cover</label>
+            <input type="file" id="bookCover" (change)="onFileSelected($event)" accept="image/*" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+            @if (bookForm.get('bookCover')?.invalid && bookForm.get('bookCover')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Book cover is required.</p>
+            }
+          </div>
+          <div class="col-span-2">
+            <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
+            <textarea id="description" formControlName="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Write book description here"></textarea>
+          </div>
+        </div>
+        <button type="submit" [disabled]="bookForm.invalid || isLoading" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50">
+          {{ editingBookId ? 'Update' : 'Add' }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
