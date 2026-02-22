@@ -1,7 +1,7 @@
 import type {OnInit} from '@angular/core'
 import type {FormGroup} from '@angular/forms'
 import type {Category} from '../../../core/interfaces/category.interface'
-import {Component, inject} from '@angular/core'
+import {ChangeDetectorRef, Component, inject} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {ToastrService} from 'ngx-toastr'
 import {CategoriesService} from '../../../core/services/categories.service'
@@ -16,6 +16,7 @@ export class ManageCategories implements OnInit {
   private categoriesService = inject(CategoriesService)
   private fb = inject(FormBuilder)
   private toastr = inject(ToastrService)
+  private cdr = inject(ChangeDetectorRef)
 
   categories: Category[] = []
   categoryForm: FormGroup
@@ -40,10 +41,12 @@ export class ManageCategories implements OnInit {
       next: (res) => {
         this.categories = res.data
         this.isLoading = false
+        this.cdr.detectChanges()
       },
       error: (_err) => {
         this.toastr.error('Error loading categories')
         this.isLoading = false
+        this.cdr.detectChanges()
       },
     })
   }
@@ -81,10 +84,12 @@ export class ManageCategories implements OnInit {
           this.loadCategories()
           this.closeModal()
           this.isLoading = false
+          this.cdr.detectChanges()
         },
         error: (_err) => {
           this.toastr.error('Error updating category')
           this.isLoading = false
+          this.cdr.detectChanges()
         },
       })
     } else {
@@ -94,10 +99,12 @@ export class ManageCategories implements OnInit {
           this.loadCategories()
           this.closeModal()
           this.isLoading = false
+          this.cdr.detectChanges()
         },
         error: (_err) => {
           this.toastr.error('Error adding category')
           this.isLoading = false
+          this.cdr.detectChanges()
         },
       })
     }
@@ -110,9 +117,11 @@ export class ManageCategories implements OnInit {
         next: () => {
           this.toastr.success('Category deleted successfully')
           this.loadCategories()
+          this.cdr.detectChanges()
         },
         error: (_err) => {
           this.toastr.error('Error deleting category')
+          this.cdr.detectChanges()
         },
       })
     }

@@ -20,7 +20,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (book of books; track book.id) {
+        @for (book of books; track book.id || $index) {
           <tr class="bg-white border-b hover:bg-gray-50">
             <td class="px-6 py-4">
               @if (book.bookCover) {

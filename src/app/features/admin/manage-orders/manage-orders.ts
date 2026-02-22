@@ -1,7 +1,7 @@
 import type {OnInit} from '@angular/core'
 import type {Order} from '../../../core/interfaces/order.interface'
 import {CommonModule} from '@angular/common'
-import {Component, inject} from '@angular/core'
+import {ChangeDetectorRef, Component, inject} from '@angular/core'
 import {ToastrService} from 'ngx-toastr'
 import {OrdersService} from '../../../core/services/orders.service'
 
@@ -14,6 +14,7 @@ import {OrdersService} from '../../../core/services/orders.service'
 export class ManageOrders implements OnInit {
   private ordersService = inject(OrdersService)
   private toastr = inject(ToastrService)
+  private cdr = inject(ChangeDetectorRef)
 
   orders: Order[] = []
   isLoading = false
@@ -29,10 +30,12 @@ export class ManageOrders implements OnInit {
       next: (res: any) => {
         this.orders = res.data || res
         this.isLoading = false
+        this.cdr.detectChanges()
       },
       error: (_err) => {
         this.toastr.error('Error loading orders')
         this.isLoading = false
+        this.cdr.detectChanges()
       },
     })
   }
@@ -44,10 +47,12 @@ export class ManageOrders implements OnInit {
     this.ordersService.updateOrderStatus(orderId, status).subscribe({
       next: () => {
         this.toastr.success(`Order status updated to ${status}`)
+        this.cdr.detectChanges()
       },
       error: (_err) => {
         this.toastr.error('Error updating order status')
         this.loadOrders()
+        this.cdr.detectChanges()
       },
     })
   }
@@ -59,9 +64,11 @@ export class ManageOrders implements OnInit {
         next: () => {
           this.toastr.success('Order deleted successfully')
           this.loadOrders()
+          this.cdr.detectChanges()
         },
         error: (_err) => {
           this.toastr.error('Error deleting order')
+          this.cdr.detectChanges()
         },
       })
     }

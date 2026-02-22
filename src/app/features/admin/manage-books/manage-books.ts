@@ -57,20 +57,28 @@ export class ManageBooks implements OnInit {
       next: (res: any) => {
         this.books = res.data || res
         this.isLoading = false
+        this.cdr.detectChanges()
       },
       error: (_err) => {
         this.toastr.error('Error loading books')
         this.isLoading = false
+        this.cdr.detectChanges()
       },
     })
 
     this.authorsService.getAllAuthors().subscribe({
-      next: (res) => { this.authors = res.data },
+      next: (res) => {
+        this.authors = res.data
+        this.cdr.detectChanges()
+      },
       error: (_err) => { this.toastr.error('Error loading authors') },
     })
 
     this.categoriesService.getAllCategories().subscribe({
-      next: (res) => { this.categories = res.data },
+      next: (res) => {
+        this.categories = res.data
+        this.cdr.detectChanges()
+      },
       error: (_err) => { this.toastr.error('Error loading categories') },
     })
   }
