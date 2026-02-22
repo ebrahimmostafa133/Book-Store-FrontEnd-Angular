@@ -1,6 +1,6 @@
-import {Component, computed, inject} from '@angular/core'
-import {Router, RouterLink, RouterLinkActive} from '@angular/router'
-import {AuthService} from '../../../core/services/auth.service'
+import type {OnInit} from '@angular/core'
+import {Component} from '@angular/core'
+import {initFlowbite} from 'flowbite'
 
 @Component({
   selector: 'app-navbar',
@@ -8,19 +8,8 @@ import {AuthService} from '../../../core/services/auth.service'
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
-  authService = inject(AuthService)
-  router = inject(Router)
-
-  isLoggedIn = computed(() => this.authService.currentUser() !== null)
-  isAdmin = computed(() => this.authService.currentUser()?.role === 'admin')
-  isUser = computed(() => this.authService.currentUser()?.role === 'user')
-
-  isAuthPage() {
-    return this.router.url === '/login' || this.router.url === '/register'
-  }
-
-  logout() {
-    this.authService.logout()
+export class Navbar implements OnInit {
+  ngOnInit() {
+    initFlowbite()
   }
 }

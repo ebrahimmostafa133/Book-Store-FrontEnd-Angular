@@ -1,1 +1,82 @@
-<p>manage-authors works!</p>
+<section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-4">
+  <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+    <h2 class="text-xl font-bold text-gray-800">Manage Authors</h2>
+    <button (click)="openModal()" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
+      Add Author
+    </button>
+  </div>
+
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3">Author Name</th>
+          <th scope="col" class="px-6 py-3">Bio</th>
+          <th scope="col" class="px-6 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (author of authors; track author.id) {
+          <tr class="bg-white border-b hover:bg-gray-50">
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              {{ author.name }}
+            </td>
+            <td class="px-6 py-4">
+              {{ author.bio }}
+            </td>
+            <td class="px-6 py-4 flex gap-4">
+              <button (click)="openModal(author)" class="font-medium text-blue-600 hover:underline">Edit</button>
+              <button (click)="deleteAuthor(author.id)" class="font-medium text-red-600 hover:underline">Delete</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+              No authors found.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+@if (isModalOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto bg-gray-900/50">
+    <div class="relative w-full max-w-md bg-white rounded-lg shadow">
+      <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+        <h3 class="text-lg font-semibold text-gray-900">
+          {{ editingAuthorId ? 'Edit Author' : 'Add Author' }}
+        </h3>
+        <button (click)="closeModal()" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+
+      <form [formGroup]="authorForm" (ngSubmit)="onSubmit()" class="p-4 md:p-5">
+        <div class="grid gap-4 mb-4 grid-cols-2">
+          <div class="col-span-2">
+            <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name</label>
+            <input type="text" id="name" formControlName="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type author name">
+            @if (authorForm.get('name')?.invalid && authorForm.get('name')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Name is required (min 3 chars).</p>
+            }
+          </div>
+          <div class="col-span-2">
+            <label for="bio" class="block mb-2 text-sm font-medium text-gray-900">Bio</label>
+            <textarea id="bio" formControlName="bio" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Write Author bio here"></textarea>
+            @if (authorForm.get('bio')?.invalid && authorForm.get('bio')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Bio is required.</p>
+            }
+          </div>
+        </div>
+        <button type="submit" [disabled]="authorForm.invalid || isLoading" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50">
+          {{ editingAuthorId ? 'Update' : 'Add' }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
