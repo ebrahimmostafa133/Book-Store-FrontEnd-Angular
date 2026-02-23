@@ -19,17 +19,27 @@ export class Books implements OnInit {
   itemsPerPage = 16
   isLoading = signal(true)
 
-  paginatedBooks = computed(() => {
-    const startIndex = (this.currentPage() - 1) * this.itemsPerPage
-    return this.books().slice(startIndex, startIndex + this.itemsPerPage)
-  })
-
-  totalPages = computed(() => Math.ceil(this.books().length / this.itemsPerPage))
+  totalPages = signal(1)
 
   ngOnInit(): void {
-    this.booksService.getAllBooks().subscribe({
-      next: (res) => {
-        this.books.set(res.data) // Update signal
+    this.loadBooks()
+  }
+
+  loadBooks(): void {
+    this.isLoading.set(true)
+    this.booksService.getAllBooks(this.currentPage(), this.itemsPerPage).subscribe({
+      next: (res: any) => {
+        this.books.set(res.data)
+
+        if (res.metadata?.numberOfPages) {
+          this.totalPages.set(res.metadata.numberOfPages)
+        } else if (res.paginationResult?.numberOfPages) {
+          this.totalPages.set(res.paginationResult.numberOfPages)
+        } else {
+          const isFullPage = res.data.length === this.itemsPerPage
+          this.totalPages.set(isFullPage ? this.currentPage() + 1 : this.currentPage())
+        }
+
         this.isLoading.set(false)
       },
       error: (err) => {
@@ -42,6 +52,7 @@ export class Books implements OnInit {
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages()) {
       this.currentPage.set(page)
+      this.loadBooks()
       window.scrollTo({top: 0, behavior: 'smooth'})
     }
   }
@@ -51,10 +62,14 @@ export class Books implements OnInit {
   )
 
   nextPage(): void {
-    this.goToPage(this.currentPage() + 1)
+    if (this.currentPage() < this.totalPages()) {
+      this.goToPage(this.currentPage() + 1)
+    }
   }
 
   previousPage(): void {
-    this.goToPage(this.currentPage() - 1)
+    if (this.currentPage() > 1) {
+      this.goToPage(this.currentPage() - 1)
+    }
   }
 }

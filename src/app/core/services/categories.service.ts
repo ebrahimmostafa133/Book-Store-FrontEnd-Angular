@@ -10,8 +10,8 @@ export class CategoriesService {
   private apiUrl = `${environment.baseUrl}/category`
   private readonly httpClient = inject(HttpClient)
 
-  getAllCategories() {
-    return this.httpClient.get<{data: Category[]}>(this.apiUrl)
+  getAllCategories(page: number = 1, limit: number = 12) {
+    return this.httpClient.get<{data: Category[]}>(`${this.apiUrl}?page=${page}&limit=${limit}`)
   }
 
   getCategoryById(id: string) {
