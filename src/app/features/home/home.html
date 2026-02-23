@@ -1,1 +1,82 @@
-<p>home works!</p>
+<!-- Hero Section -->
+<section class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+  <div class="py-16 px-4 mx-auto max-w-7xl text-center lg:py-24 lg:px-12">
+    <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+      Discover Your Next Great Read
+    </h1>
+    <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+      Explore thousands of books ranging from thrilling fiction to insightful non-fiction. Find exactly what you're looking for with our curated collections.
+    </p>
+    <div class="flex flex-col mb-8 lg:mb-16 space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
+      <a routerLink="/books" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900 transition duration-200">
+        Browse All Books
+        <i class="fa-solid fa-arrow-right ml-2 -mr-1"></i>
+      </a>
+      <a routerLink="/categories" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-gray-900 rounded-lg border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800 transition duration-200">
+        Explore Categories
+      </a>  
+    </div>
+  </div>
+</section>
+
+<!-- Featured Books Section -->
+<section class="py-12 bg-white dark:bg-gray-800 antialiased">
+  <div class="max-w-7xl px-4 mx-auto 2xl:px-0">
+    <div class="mb-8 flex items-center justify-between">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Trending Books</h2>
+      <a routerLink="/books" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">View all &rarr;</a>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      @for (book of books(); track book.id) {
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300 group">
+          <div class="h-64 w-full relative mb-4 overflow-hidden rounded-md bg-gray-100 cursor-pointer">
+            <a [routerLink]="['/details', book.id]">
+              <img class="mx-auto h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" [src]="book.bookCover" [alt]="book.name" />
+            </a>
+            <div class="absolute top-2 right-2">
+              <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ book.category }}</span>
+            </div>
+          </div>
+          
+          <div class="pt-2">
+            <h3 class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white cursor-pointer truncate">
+              <a [routerLink]="['/details', book.id]">{{ book.name }}</a>
+            </h3>
+            
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 truncate">by {{ book.author }}</p>
+
+            <div class="mt-2 flex items-center gap-2">
+              <div class="flex items-center">
+                <i class="fa-solid fa-star text-yellow-400 text-sm"></i>
+                <p class="text-sm font-medium text-gray-900 dark:text-white ml-1">{{ book.averageRating }}</p>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between gap-4">
+              <p class="text-xl font-extrabold leading-tight text-gray-900 dark:text-white">{{ book.price | currency }}</p>
+
+              <a [routerLink]="['/details', book.id]" class="inline-flex items-center rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition duration-200">
+                <i class="fa-solid fa-circle-info -ms-2 me-2"></i>
+                View details
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (!isLoading() && books().length === 0) {
+      <div class="text-center py-12">
+        <h3 class="text-xl text-gray-500 dark:text-gray-400">No trending books found.</h3>
+      </div>
+    }
+
+    @if (isLoading()) {
+      <div class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700"></div>
+      </div>
+    }
+  </div>
+</section>

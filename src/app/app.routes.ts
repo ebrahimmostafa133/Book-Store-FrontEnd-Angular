@@ -18,7 +18,7 @@ export const routes: Routes = [
       {path: 'cart', loadComponent: () => import('./features/cart/cart').then(m => m.Cart)},
       {path: 'checkout', loadComponent: () => import('./features/checkout/checkout').then(m => m.Checkout)},
       {path: 'allorders', loadComponent: () => import('./features/allorders/allorders').then(m => m.Allorders)},
-      {path: 'authors', loadComponent: () => import('./features/authors/brands').then(m => m.Brands)},
+      {path: 'authors', loadComponent: () => import('./features/authors/authors').then(m => m.Authors)},
       {path: 'categories', loadComponent: () => import('./features/categories/categories').then(m => m.Categories)},
       {path: 'profile', loadComponent: () => import('./features/profile/profile').then(m => m.Profile)},
       {path: 'wishlist', loadComponent: () => import('./features/wishlist/wishlist').then(m => m.Wishlist)},
