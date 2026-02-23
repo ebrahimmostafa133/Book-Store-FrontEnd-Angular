@@ -8,12 +8,13 @@ import {CookieService} from 'ngx-cookie-service'
 import {provideToastr} from 'ngx-toastr'
 import {routes} from './app.routes'
 import {errorInterceptor} from './core/interceptors/error-interceptor'
+import {headersInterceptor} from './core/interceptors/headers-interceptor'
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([errorInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([errorInterceptor, headersInterceptor])),
     provideClientHydration(withEventReplay()),
     provideAnimations(),
     provideToastr({

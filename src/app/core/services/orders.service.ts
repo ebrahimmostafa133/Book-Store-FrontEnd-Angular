@@ -14,6 +14,7 @@ export class OrdersService {
     return this.httpClient.get<{data: Order[]}>(this.apiUrl)
   }
 
+  // TODO: remove. unused, and doesn't match new API
   getOrderById(id: string) {
     return this.httpClient.get<{data: Order}>(`${this.apiUrl}/${id}`)
   }
