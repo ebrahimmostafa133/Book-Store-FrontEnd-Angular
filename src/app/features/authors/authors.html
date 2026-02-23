@@ -24,7 +24,7 @@
             <p class="text-sm text-gray-400 dark:text-gray-500 italic mb-4">No biography available.</p>
           }
 
-          <a [routerLink]="['/books']" [queryParams]="{author: author.id}" class="mt-auto inline-flex items-center text-sm font-medium text-blue-600 hover:underline dark:text-blue-500 transition duration-200">
+          <a [routerLink]="['/authors', author.id]" class="mt-auto inline-flex items-center text-sm font-medium text-blue-600 hover:underline dark:text-blue-500 transition duration-200">
             <i class="fa-solid fa-book me-1.5"></i>
             View Books
           </a>
