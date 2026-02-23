@@ -1,11 +1,60 @@
-import {Component} from '@angular/core'
+import type {OnInit} from '@angular/core'
+import type {Book} from '../../core/interfaces/book.interface'
+import {CurrencyPipe} from '@angular/common'
+import {Component, computed, inject, signal} from '@angular/core'
+import {RouterLink} from '@angular/router'
+import {BooksService} from '../../core/services/books.service'
 
 @Component({
   selector: 'app-books',
-  imports: [],
+  imports: [CurrencyPipe, RouterLink],
   templateUrl: './books.html',
   styleUrl: './books.css',
 })
-export class Books {
+export class Books implements OnInit {
+  private readonly booksService = inject(BooksService)
 
+  books = signal<Book[]>([])
+  currentPage = signal(1)
+  itemsPerPage = 16
+  isLoading = signal(true)
+
+  paginatedBooks = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage
+    return this.books().slice(startIndex, startIndex + this.itemsPerPage)
+  })
+
+  totalPages = computed(() => Math.ceil(this.books().length / this.itemsPerPage))
+
+  ngOnInit(): void {
+    this.booksService.getAllBooks().subscribe({
+      next: (res) => {
+        this.books.set(res.data) // Update signal
+        this.isLoading.set(false)
+      },
+      error: (err) => {
+        console.error(err)
+        this.isLoading.set(false)
+      },
+    })
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page)
+      window.scrollTo({top: 0, behavior: 'smooth'})
+    }
+  }
+
+  pagesArray = computed(() =>
+    Array.from({length: this.totalPages()}, (_, i) => i + 1),
+  )
+
+  nextPage(): void {
+    this.goToPage(this.currentPage() + 1)
+  }
+
+  previousPage(): void {
+    this.goToPage(this.currentPage() - 1)
+  }
 }

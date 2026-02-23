@@ -1,1 +1,144 @@
-<p>details works!</p>
+<!-- Book Details Section -->
+<section class="py-12 bg-white dark:bg-gray-800 antialiased min-h-screen">
+  <div class="max-w-7xl px-4 mx-auto 2xl:px-0">
+    
+    @let currentBook = book();
+    @if (currentBook) {
+      <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
+        
+        <!-- Left Column: Book Cover -->
+        <div class="shrink-0 max-w-md lg:max-w-lg mx-auto mb-8 lg:mb-0">
+          <img class="w-full rounded-lg shadow-md object-contain h-[500px]" [src]="currentBook.bookCover" [alt]="currentBook.name" />
+        </div>
+
+        <!-- Right Column: Book Info -->
+        <div class="mt-6 sm:mt-8 lg:mt-0 flex flex-col">
+          <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl dark:text-white">
+            {{ currentBook.name }}
+          </h1>
+          
+          <div class="mt-4 sm:items-center sm:gap-4 sm:flex">
+            <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-white">
+              {{ currentBook.price | currency }}
+            </p>
+
+            <div class="flex items-center gap-2 mt-2 sm:mt-0">
+              <div class="flex items-center gap-1">
+                <i class="fa-solid fa-star text-yellow-400"></i>
+                <p class="text-sm font-medium leading-none text-gray-500 dark:text-gray-400">
+                  {{ currentBook.averageRating || 'N/A' }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra details like category and author -->
+          <ul class="my-6 text-sm text-gray-700 dark:text-gray-400">
+            <li class="mb-2">
+              <span class="font-semibold text-gray-900 dark:text-white">Author:</span> {{ currentBook.author }}
+            </li>
+            <li class="mb-2">
+              <span class="font-semibold text-gray-900 dark:text-white">Category:</span>
+              <span class="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ currentBook.category }}</span>
+            </li>
+          </ul>
+
+          <div class="mt-4 sm:gap-4 sm:items-center flex sm:mt-6">
+            <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition duration-200">
+              <i class="fa-solid fa-cart-shopping -ms-2 me-2"></i>
+              Add to cart
+            </button>
+          </div>
+
+          <hr class="my-8 md:my-10 border-gray-200 dark:border-gray-800" />
+
+          <!-- Description (if provided, fallback to a generic message currently) -->
+          <div class="text-gray-500 dark:text-gray-400 text-base font-normal mb-10">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Synopsis</h2>
+            <p>
+              {{ currentBook.description || 'Dive into this incredible journey crafted by ' + currentBook.author + '. Perfect for readers who enjoy ' + currentBook.category + '.' }}
+            </p>
+          </div>
+
+          <!-- Reviews & Comments Section -->
+          <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Customer Reviews</h2>
+
+            <!-- Add Review Form -->
+            <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="mb-8 bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Write a Review</h3>
+              
+              <div class="mb-4">
+                <label for="rating" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Rating (1-5)</label>
+                <input type="number" id="rating" formControlName="rating" min="1" max="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+              </div>
+              
+              <div class="mb-4">
+                <label for="comment" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your Comment</label>
+                <textarea id="comment" rows="4" formControlName="comment" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="What did you think of this book?" required></textarea>
+              </div>
+
+              <button type="submit" [disabled]="reviewForm.invalid" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200">
+                Submit Review
+              </button>
+            </form>
+
+            <!-- Reviews List -->
+            <div class="space-y-6">
+              @for (review of reviews(); track review.id) {
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 flex items-center justify-center font-bold text-sm">
+                        {{ review.user.charAt(0) }}
+                      </div>
+                      <span class="font-medium text-gray-900 dark:text-white">{{ review.user }}</span>
+                    </div>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ review.date | date:'mediumDate' }}</span>
+                  </div>
+                  
+                  <div class="flex items-center mb-2">
+                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                      <i class="fa-solid fa-star text-sm" [class.text-yellow-400]="star <= review.rating" [class.text-gray-300]="star > review.rating" [class.dark:text-gray-600]="star > review.rating"></i>
+                    }
+                  </div>
+                  
+                  <p class="text-gray-600 dark:text-gray-300">
+                    {{ review.comment }}
+                  </p>
+                </div>
+              }
+              
+              @if (reviews().length === 0) {
+                <p class="text-center text-gray-500 dark:text-gray-400 italic">No reviews yet. Be the first to share your thoughts!</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (!isLoading() && !currentBook) {
+      <!-- Fallback when book REALLY not found -->
+      <div class="text-center py-20 border border-gray-200 rounded-lg dark:border-gray-700">
+        <div class="text-6xl mb-4 text-gray-300 dark:text-gray-600">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Book Not Found</h2>
+        <p class="font-light text-gray-500 dark:text-gray-400">Sorry, we couldn't find the book you were looking for.</p>
+        <a routerLink="/books" class="mt-6 inline-flex items-center text-blue-600 hover:underline">
+          <i class="fa-solid fa-arrow-left me-2"></i>
+          Back to all books
+        </a>
+      </div>
+    }
+
+    @if (isLoading()) {
+      <div class="flex flex-col justify-center items-center py-20">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-700 mb-4"></div>
+        <p class="text-gray-500 dark:text-gray-400">Loading book details...</p>
+      </div>
+    }
+
+  </div>
+</section>
