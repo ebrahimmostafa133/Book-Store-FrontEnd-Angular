@@ -10,6 +10,17 @@ export class OrdersService {
   private apiUrl = `${environment.baseUrl}/order`
   private readonly httpClient = inject(HttpClient)
 
+  placeOrder(shippingAddress: any, paymentMethod: string) {
+    return this.httpClient.post<{data: Order}>(this.apiUrl, {
+      shippingAddress,
+      paymentMethod,
+    })
+  }
+
+  getMyOrders() {
+    return this.httpClient.get<{data: Order[]}>(`${this.apiUrl}/my-orders`)
+  }
+
   getAllOrders() {
     return this.httpClient.get<{data: Order[]}>(this.apiUrl)
   }
