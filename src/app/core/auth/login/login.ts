@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common'
-import {Component, inject, signal} from '@angular/core'
+import {Component, inject} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {AuthService} from '../../services/auth.service'
 
@@ -20,16 +20,10 @@ export class Login {
 
   constructor(private _fb: FormBuilder) {}
 
-  errorMessage = signal<string | null>(null)
-
   onLogin() {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => console.log('Logged in!'),
-        error: (err) => {
-          this.errorMessage.set(err.error?.message
-            || 'Invalid email or password. Please try again.')
-        },
       })
     }
   }

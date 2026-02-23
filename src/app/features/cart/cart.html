@@ -1,1 +1,102 @@
-<p>cart works!</p>
+<div class="container mx-auto p-6 min-h-screen">
+  <h1 class="text-3xl font-bold mb-8 text-gray-800">Your Shopping Cart</h1>
+
+  <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+  @if (cart && cart.items.length > 0) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <div class="lg:col-span-2 space-y-4">
+        @for (item of cart.items; track item.book.id) {
+          <div class="flex flex-col md:flex-row items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 transition-hover hover:shadow-md">
+            <img [src]="item.book.coverImage || 'assets/default-book.png'" 
+                 class="w-20 h-28 object-cover rounded shadow-sm" 
+                 [alt]="item.book.title">
+            
+            <div class="mt-4 md:mt-0 md:ml-6 flex-1 text-center md:text-left">
+              <h3 class="text-lg font-semibold text-gray-800">{{ item.book.title }}</h3>
+              <p class="text-indigo-600 font-bold">${{ item.book.price }}</p>
+              
+              @if (item.book.stock < 5) {
+                <p class="text-xs text-orange-500 font-medium mt-1">
+                  <i class="fas fa-exclamation-triangle mr-1"></i> Only {{ item.book.stock }} left!
+                </p>
+              }
+            </div>
+
+            <div class="flex items-center space-x-3 bg-gray-50 px-3 py-1 rounded-full border my-4 md:my-0">
+              <button (click)="updateQuantity(item.book.id, item.quantity, -1)" 
+                      class="text-gray-400 hover:text-red-500 transition-colors p-1"
+                      aria-label="Decrease quantity">
+                <i class="fas fa-minus text-sm"></i>
+              </button>
+              
+              <span class="font-bold w-6 text-center text-gray-700">{{ item.quantity }}</span>
+              
+              <button (click)="updateQuantity(item.book.id, item.quantity, 1)" 
+                      [disabled]="item.quantity >= item.book.stock"
+                      class="text-gray-400 hover:text-green-500 transition-colors p-1 disabled:opacity-20"
+                      aria-label="Increase quantity">
+                <i class="fas fa-plus text-sm"></i>
+              </button>
+            </div>
+
+            <div class="md:ml-8 text-right min-w-[100px]">
+              <p class="font-bold text-gray-900 text-lg">${{ item.itemTotal }}</p>
+              <button (click)="removeItem(item.book.id)" 
+                      class="text-red-400 hover:text-red-600 text-sm mt-2 transition-colors">
+                <i class="fas fa-trash-alt mr-1"></i> Remove
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <aside class="h-fit sticky top-6">
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+          <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Order Summary</h2>
+          
+          <div class="space-y-3 border-b pb-4">
+            <div class="flex justify-between text-gray-600">
+              <span>Items ({{ cart.itemCount }})</span>
+              <span>${{ cart.totalAmount }}</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+              <span>Shipping</span>
+              <span class="text-green-600 font-medium">Free</span>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center py-4">
+            <span class="text-lg font-bold text-gray-700">Total</span>
+            <span class="text-2xl font-extrabold text-indigo-700">${{ cart.totalAmount }}</span>
+          </div>
+
+          <button (click)="proceedToCheckout()"
+                  class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-[0.98]">
+            Proceed to Checkout
+          </button>
+          
+          <a routerLink="/books" class="block text-center mt-4 text-sm text-gray-400 hover:text-indigo-500 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Continue Shopping
+          </a>
+        </div>
+      </aside>
+
+    </div>
+  } @else {
+    <div class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl shadow-sm border border-dashed border-gray-200">
+      <div class="bg-gray-50 p-8 rounded-full mb-6">
+        <i class="fas fa-shopping-cart fa-5x text-gray-200"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800">Your cart is empty</h2>
+      <p class="text-gray-500 mt-2 mb-8 max-w-xs text-center">
+        Your basket is currently empty. Start exploring our collection of books!
+      </p>
+      <a routerLink="/books" 
+         class="bg-indigo-600 text-white px-10 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg">
+        Browse Books
+      </a>
+    </div>
+  }
+</div>

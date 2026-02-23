@@ -1,7 +1,7 @@
 import type {OnInit} from '@angular/core'
 import type {FormGroup} from '@angular/forms'
 import type {Author} from '../../../core/interfaces/author.interface'
-import {Component, inject} from '@angular/core'
+import {ChangeDetectorRef, Component, inject} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {ToastrService} from 'ngx-toastr'
 import {AuthorsService} from '../../../core/services/authors.service'
@@ -16,6 +16,7 @@ export class ManageAuthors implements OnInit {
   private authorsService = inject(AuthorsService)
   private fb = inject(FormBuilder)
   private toastr = inject(ToastrService)
+  private cdr = inject(ChangeDetectorRef)
 
   authors: Author[] = []
   authorForm: FormGroup
@@ -40,10 +41,12 @@ export class ManageAuthors implements OnInit {
       next: (res) => {
         this.authors = res.data
         this.isLoading = false
+        this.cdr.detectChanges()
       },
       error: (_err) => {
         this.toastr.error('Error loading authors')
         this.isLoading = false
+        this.cdr.detectChanges()
       },
     })
   }
@@ -81,10 +84,12 @@ export class ManageAuthors implements OnInit {
           this.loadAuthors()
           this.closeModal()
           this.isLoading = false
+          this.cdr.detectChanges()
         },
         error: (_err) => {
           this.toastr.error('Error updating author')
           this.isLoading = false
+          this.cdr.detectChanges()
         },
       })
     } else {
@@ -94,10 +99,12 @@ export class ManageAuthors implements OnInit {
           this.loadAuthors()
           this.closeModal()
           this.isLoading = false
+          this.cdr.detectChanges()
         },
         error: (_err) => {
           this.toastr.error('Error adding author')
           this.isLoading = false
+          this.cdr.detectChanges()
         },
       })
     }
@@ -110,9 +117,11 @@ export class ManageAuthors implements OnInit {
         next: () => {
           this.toastr.success('Author deleted successfully')
           this.loadAuthors()
+          this.cdr.detectChanges()
         },
         error: (_err) => {
           this.toastr.error('Error deleting author')
+          this.cdr.detectChanges()
         },
       })
     }
