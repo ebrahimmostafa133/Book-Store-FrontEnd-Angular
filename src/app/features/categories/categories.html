@@ -30,7 +30,7 @@
             </p>
           }
 
-          <a [routerLink]="['/books']" [queryParams]="{category: category.id}" class="mt-auto inline-flex items-center font-medium text-blue-600 hover:underline dark:text-blue-500">
+          <a [routerLink]="['/categories', category.id]" class="mt-auto inline-flex items-center font-medium text-blue-600 hover:underline dark:text-blue-500">
             View Books
             <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
           </a>
