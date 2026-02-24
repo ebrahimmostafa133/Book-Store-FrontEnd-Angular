@@ -3,11 +3,11 @@
 
   <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
 
-  @if (cart && cart.items.length > 0) {
+  @if (cart() && (cart()?.items?.length??0 > 0)) {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       
       <div class="lg:col-span-2 space-y-4">
-        @for (item of cart.items; track item.book.id) {
+        @for (item of cart()?.items; track item.book.id) {
           <div class="flex flex-col md:flex-row items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 transition-hover hover:shadow-md">
             <img [src]="item.book.bookCover || 'assets/default-book.png'" 
                  class="w-20 h-28 object-cover rounded shadow-sm" 
@@ -15,7 +15,7 @@
             
             <div class="mt-4 md:mt-0 md:ml-6 flex-1 text-center md:text-left">
               <h3 class="text-lg font-semibold text-gray-800">{{ item.book.name }}</h3>
-              <p class="text-indigo-600 font-bold">${{ item.book.price }}</p>
+              <p class="text-indigo-600 font-bold">{{ item.book.price | currency}}</p>
               
               @if (item.book.stock < 5) {
                 <p class="text-xs text-orange-500 font-medium mt-1">
@@ -42,7 +42,7 @@
             </div>
 
             <div class="md:ml-8 text-right min-w-[100px]">
-              <p class="font-bold text-gray-900 text-lg">${{ item.itemTotal }}</p>
+              <p class="font-bold text-gray-900 text-lg">{{ item.itemTotal | currency}}</p>
               <button (click)="removeItem(item.book.id)" 
                       class="text-red-400 hover:text-red-600 text-sm mt-2 transition-colors">
                 <i class="fas fa-trash-alt mr-1"></i> Remove
@@ -58,8 +58,8 @@
           
           <div class="space-y-3 border-b pb-4">
             <div class="flex justify-between text-gray-600">
-              <span>Items ({{ cart.itemCount }})</span>
-              <span>${{ cart.totalAmount }}</span>
+              <span>Items ({{ cart()?.itemCount }})</span>
+              <span>{{ cart()?.totalAmount | currency}}</span>
             </div>
             <div class="flex justify-between text-gray-600">
               <span>Shipping</span>
@@ -69,7 +69,7 @@
 
           <div class="flex justify-between items-center py-4">
             <span class="text-lg font-bold text-gray-700">Total</span>
-            <span class="text-2xl font-extrabold text-indigo-700">${{ cart.totalAmount }}</span>
+            <span class="text-2xl font-extrabold text-indigo-700">{{ cart()?.totalAmount | currency}}</span>
           </div>
 
           <button (click)="proceedToCheckout()"
