@@ -39,6 +39,7 @@ export const routes: Routes = [
       {path: 'authors', loadComponent: () => import('./features/admin/manage-authors/manage-authors').then(m => m.ManageAuthors)},
       {path: 'categories', loadComponent: () => import('./features/admin/manage-categories/manage-categories').then(m => m.ManageCategories)},
       {path: 'orders', loadComponent: () => import('./features/admin/manage-orders/manage-orders').then(m => m.ManageOrders)},
+      {path: 'profile', loadComponent: () => import('./features/profile/profile').then(m => m.Profile)},
     ],
   },
   {
