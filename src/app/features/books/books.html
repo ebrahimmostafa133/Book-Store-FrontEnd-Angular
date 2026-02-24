@@ -5,13 +5,43 @@
       <p class="mt-2 text-lg text-gray-500 dark:text-gray-400">Discover your next favorite read.</p>
     </div>
 
+    <div class="mb-8 flex flex-col md:flex-row gap-4 justify-center items-center w-full max-w-4xl mx-auto">
+      <input 
+        type="text" 
+        placeholder="Search..." 
+        class="border p-2 w-full md:w-2/3 
+               rounded border-green-500 focus:outline-none 
+               focus:ring-2 focus:ring-green-500 focus:border-transparent
+               dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400 dark:border-green-400"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)">
+
+      <div class="flex items-center w-full md:w-1/3">
+        <div class="relative w-full border border-green-500 rounded bg-white dark:bg-gray-800 dark:border-green-400 flex">
+          <div class="flex items-center pl-3 pointer-events-none">
+            <i class="fa-solid fa-arrow-down-a-z text-gray-500 dark:text-gray-400"></i>
+          </div>
+          <select 
+            class="bg-transparent text-gray-900 border-none text-sm focus:ring-0 focus:border-none block w-full p-2.5 dark:placeholder-gray-400 dark:text-white"
+            [ngModel]="sortOption()"
+            (ngModelChange)="onSortChange($event)">
+            <option value="" class="dark:bg-gray-800">Sort by: Default</option>
+            <option value="-createdAt" class="dark:bg-gray-800">Newest Arrivals</option>
+            <option value="price" class="dark:bg-gray-800">Price: Low to High</option>
+            <option value="-price" class="dark:bg-gray-800">Price: High to Low</option>
+            <option value="-averageRating" class="dark:bg-gray-800">Highest Rating</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     @if (isLoading()) {
       <div class="flex justify-center items-center py-12">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700"></div>
       </div>
     } @else {
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        @for (book of books() | paginate: { id: 'foo', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track book.id) {
+        @for (book of filteredBooks() | paginate: { id: 'foo', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track book.id) {
           <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300 group flex flex-col h-full">
             <div class="h-64 w-full relative mb-4 overflow-hidden rounded-md bg-gray-100 cursor-pointer object-contain">
               <a [routerLink]="['/details', book.id]">

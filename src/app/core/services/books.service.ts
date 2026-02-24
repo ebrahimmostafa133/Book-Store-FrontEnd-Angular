@@ -10,8 +10,12 @@ export class BooksService {
   private apiUrl = `${environment.baseUrl}/book`
   private readonly httpClient = inject(HttpClient)
 
-  getAllBooks(page: number = 1, limit: number = 16) {
-    return this.httpClient.get<{data: Book[]}>(`${this.apiUrl}?page=${page}&limit=${limit}`)
+  getAllBooks(page: number = 1, limit: number = 16, sort?: string) {
+    let url = `${this.apiUrl}?page=${page}&limit=${limit}`
+    if (sort) {
+      url += `&sort=${sort}`
+    }
+    return this.httpClient.get<{data: Book[]}>(url)
   }
 
   getBookById(id: string) {
