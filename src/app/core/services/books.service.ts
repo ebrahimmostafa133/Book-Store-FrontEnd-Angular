@@ -10,8 +10,8 @@ export class BooksService {
   private apiUrl = `${environment.baseUrl}/book`
   private readonly httpClient = inject(HttpClient)
 
-  getAllBooks() {
-    return this.httpClient.get<{data: Book[]}>(this.apiUrl)
+  getAllBooks(page: number = 1, limit: number = 16) {
+    return this.httpClient.get<{data: Book[]}>(`${this.apiUrl}?page=${page}&limit=${limit}`)
   }
 
   getBookById(id: string) {
@@ -34,12 +34,12 @@ export class BooksService {
     return this.httpClient.get<{data: Book[]}>(`${this.apiUrl}/search?q=${query}`)
   }
 
-  filterBooksByCategory(categoryId: string) {
-    return this.httpClient.get<{data: Book[]}>(`${this.apiUrl}/category/${categoryId}`)
+  filterBooksByCategory(categoryId: string, page: number = 1, limit: number = 16) {
+    return this.httpClient.get<{data: Book[]}>(`${this.apiUrl}/category/${categoryId}?page=${page}&limit=${limit}`)
   }
 
-  filterBooksByAuthor(authorId: string) {
-    return this.httpClient.get<{data: Book[]}>(`${this.apiUrl}/author/${authorId}`)
+  filterBooksByAuthor(authorId: string, page: number = 1, limit: number = 16) {
+    return this.httpClient.get<{data: Book[]}>(`${this.apiUrl}/author/${authorId}?page=${page}&limit=${limit}`)
   }
 
   filterBooksByPrice(minPrice: number, maxPrice: number) {

@@ -1,8 +1,13 @@
 <section class="py-12 bg-white dark:bg-gray-800 antialiased min-h-screen">
   <div class="max-w-7xl px-4 mx-auto 2xl:px-0">
-    <div class="mb-8 border-b border-gray-200 pb-4 dark:border-gray-700">
-      <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">All Books</h1>
-      <p class="mt-2 text-lg text-gray-500 dark:text-gray-400">Discover your next favorite read.</p>
+    <div class="mb-8 border-b border-gray-200 pb-4 dark:border-gray-700 flex justify-between items-end">
+      <div>
+        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Category Books</h1>
+        <p class="mt-2 text-lg text-gray-500 dark:text-gray-400">Explore all books within this category.</p>
+      </div>
+      <a routerLink="/categories" class="text-blue-600 hover:underline dark:text-blue-500 flex items-center gap-2 mb-2">
+        <i class="fa-solid fa-arrow-left"></i> Back to Categories
+      </a>
     </div>
 
     @if (isLoading()) {
@@ -11,7 +16,7 @@
       </div>
     } @else {
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        @for (book of books() | paginate: { id: 'foo', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track book.id) {
+        @for (book of books(); track book.id) {
           <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300 group flex flex-col h-full">
             <div class="h-64 w-full relative mb-4 overflow-hidden rounded-md bg-gray-100 cursor-pointer object-contain">
               <a [routerLink]="['/details', book.id]">
@@ -24,7 +29,6 @@
                 <h3 class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white line-clamp-2">
                   <a [routerLink]="['/details', book.id]">{{ book.name }}</a>
                 </h3>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 truncate">by {{ book.author }}</p>
               </div>
 
               <div class="mt-4 flex items-center justify-between gap-4">
@@ -37,16 +41,13 @@
           </div>
         } @empty {
           <div class="col-span-full text-center py-12">
-            <h3 class="text-xl text-gray-500 dark:text-gray-400">No books found.</h3>
+            <div class="text-5xl mb-4 text-gray-300 dark:text-gray-600">
+              <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h3 class="text-xl text-gray-500 dark:text-gray-400">No books found for this category.</h3>
           </div>
         }
       </div>
-
-      @if (totalItems() > itemsPerPage) {
-        <pagination-controls  id="foo" class="mt-4 items-center justify-center flex my-pagination"
-              (pageChange)="goToPage($event)">    
-        </pagination-controls>
-      }
     }
   </div>
 </section>

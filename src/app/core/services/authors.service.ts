@@ -10,8 +10,8 @@ export class AuthorsService {
   private apiUrl = `${environment.baseUrl}/author`
   private readonly httpClient = inject(HttpClient)
 
-  getAllAuthors() {
-    return this.httpClient.get<{data: Author[]}>(this.apiUrl)
+  getAllAuthors(page: number = 1, limit: number = 12) {
+    return this.httpClient.get<{data: Author[]}>(`${this.apiUrl}?page=${page}&limit=${limit}`)
   }
 
   getAuthorById(id: string) {

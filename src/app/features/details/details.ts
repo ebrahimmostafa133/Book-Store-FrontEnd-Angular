@@ -5,8 +5,10 @@ import {CurrencyPipe, DatePipe} from '@angular/common'
 import {Component, inject, signal} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {ActivatedRoute} from '@angular/router'
+import {ToastrService} from 'ngx-toastr'
 
 import {BooksService} from '../../core/services/books.service'
+import {CartService} from '../../core/services/cart.service'
 
 @Component({
   selector: 'app-details',
@@ -17,6 +19,8 @@ import {BooksService} from '../../core/services/books.service'
 export class Details implements OnInit {
   private readonly route = inject(ActivatedRoute)
   private readonly booksService = inject(BooksService)
+  private readonly cartService = inject(CartService)
+  private readonly toastr = inject(ToastrService)
 
   book = signal<Book | null>(null)
   isLoading = signal(true)
@@ -68,5 +72,17 @@ export class Details implements OnInit {
       this.reviews.update(reviews => [newReview, ...reviews])
       this.reviewForm.reset({rating: 5, comment: ''})
     }
+  }
+
+  addToCart(bookId: string): void {
+    this.cartService.addToCart(bookId, 1).subscribe({
+      next: () => {
+        this.toastr.success('Book added to cart successfully!')
+      },
+      error: (err) => {
+        console.error('Error adding book to cart', err)
+        this.toastr.error('Failed to add book to cart.')
+      },
+    })
   }
 }
