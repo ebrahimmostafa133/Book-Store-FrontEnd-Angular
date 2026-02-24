@@ -9,12 +9,12 @@
       <div class="lg:col-span-2 space-y-4">
         @for (item of cart.items; track item.book.id) {
           <div class="flex flex-col md:flex-row items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 transition-hover hover:shadow-md">
-            <img [src]="item.book.coverImage || 'assets/default-book.png'" 
+            <img [src]="item.book.bookCover || 'assets/default-book.png'" 
                  class="w-20 h-28 object-cover rounded shadow-sm" 
-                 [alt]="item.book.title">
+                 [alt]="item.book.name">
             
             <div class="mt-4 md:mt-0 md:ml-6 flex-1 text-center md:text-left">
-              <h3 class="text-lg font-semibold text-gray-800">{{ item.book.title }}</h3>
+              <h3 class="text-lg font-semibold text-gray-800">{{ item.book.name }}</h3>
               <p class="text-indigo-600 font-bold">${{ item.book.price }}</p>
               
               @if (item.book.stock < 5) {

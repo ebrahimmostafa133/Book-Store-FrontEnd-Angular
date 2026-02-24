@@ -15,7 +15,7 @@ export class CartService {
     return this.httpClient.get<{data: Cart}>(this.apiUrl)
   }
 
-  addToCart(bookId: string, quantity: number) {
+  upsertToCart(bookId: string, quantity: number) {
     return this.httpClient.post<{data: Cart}>(this.apiUrl, {
       book: bookId,
       quantity,

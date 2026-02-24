@@ -47,7 +47,7 @@ export class Cart implements OnInit {
     if (newQty < 1) { return }
 
     this.spinner.show()
-    this.cartService.addToCart(bookId, delta).subscribe({
+    this.cartService.upsertToCart(bookId, newQty).subscribe({
       next: (res) => {
         this.cart = res.data
         this.spinner.hide()
