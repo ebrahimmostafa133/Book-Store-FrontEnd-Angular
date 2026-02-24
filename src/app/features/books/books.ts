@@ -1,13 +1,14 @@
 import type {OnInit} from '@angular/core'
 import type {Book} from '../../core/interfaces/book.interface'
 import {CurrencyPipe} from '@angular/common'
-import {Component, computed, inject, signal} from '@angular/core'
+import {Component, inject, signal} from '@angular/core'
 import {RouterLink} from '@angular/router'
+import {NgxPaginationModule} from 'ngx-pagination'
 import {BooksService} from '../../core/services/books.service'
 
 @Component({
   selector: 'app-books',
-  imports: [CurrencyPipe, RouterLink],
+  imports: [CurrencyPipe, RouterLink, NgxPaginationModule],
   templateUrl: './books.html',
   styleUrl: './books.css',
 })
@@ -16,10 +17,11 @@ export class Books implements OnInit {
 
   books = signal<Book[]>([])
   currentPage = signal(1)
-  itemsPerPage = 16
+  itemsPerPage = 3
   isLoading = signal(true)
 
   totalPages = signal(1)
+  totalItems = signal(0)
 
   ngOnInit(): void {
     this.loadBooks()
@@ -40,6 +42,10 @@ export class Books implements OnInit {
           this.totalPages.set(isFullPage ? this.currentPage() + 1 : this.currentPage())
         }
 
+        const totalItemsCalc = res.metadata?.totalItems ?? res.paginationResult?.totalItems ?? res.totalItems
+        const total = totalItemsCalc || (this.totalPages() * this.itemsPerPage)
+        this.totalItems.set(total)
+
         this.isLoading.set(false)
       },
       error: (err) => {
@@ -50,26 +56,8 @@ export class Books implements OnInit {
   }
 
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages()) {
-      this.currentPage.set(page)
-      this.loadBooks()
-      window.scrollTo({top: 0, behavior: 'smooth'})
-    }
-  }
-
-  pagesArray = computed(() =>
-    Array.from({length: this.totalPages()}, (_, i) => i + 1),
-  )
-
-  nextPage(): void {
-    if (this.currentPage() < this.totalPages()) {
-      this.goToPage(this.currentPage() + 1)
-    }
-  }
-
-  previousPage(): void {
-    if (this.currentPage() > 1) {
-      this.goToPage(this.currentPage() - 1)
-    }
+    this.currentPage.set(page)
+    this.loadBooks()
+    window.scrollTo({top: 0, behavior: 'smooth'})
   }
 }
