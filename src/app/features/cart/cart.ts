@@ -1,7 +1,7 @@
 import type {OnInit} from '@angular/core'
 import type {Cart as CartInterface} from '../../core/interfaces/cart.interface'
 import {CommonModule, isPlatformBrowser} from '@angular/common'
-import {ChangeDetectorRef, Component, inject, PLATFORM_ID} from '@angular/core'
+import {Component, computed, inject, PLATFORM_ID, signal} from '@angular/core'
 import {Router, RouterModule} from '@angular/router'
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner'
 import {CartService} from '../../core/services/cart.service'
@@ -17,10 +17,13 @@ export class Cart implements OnInit {
   private cartService = inject(CartService)
   private spinner = inject(NgxSpinnerService)
   private platformId = inject(PLATFORM_ID)
-  private cdr = inject(ChangeDetectorRef)
   private router = inject(Router)
 
-  cart: CartInterface | null = null
+  cart = signal<CartInterface | null>(null)
+
+  cartItems = computed(() => this.cart()?.items || [])
+  totalAmount = computed(() => this.cart()?.totalAmount || 0)
+  isEmpty = computed(() => this.cartItems().length === 0)
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -32,13 +35,10 @@ export class Cart implements OnInit {
     this.spinner.show()
     this.cartService.getCart().subscribe({
       next: (res) => {
-        this.cart = res.data
-        this.spinner.hide()
-        this.cdr.detectChanges()
-      },
-      error: () => {
+        this.cart.set(res.data)
         this.spinner.hide()
       },
+      error: () => this.spinner.hide(),
     })
   }
 
@@ -46,13 +46,24 @@ export class Cart implements OnInit {
     const newQty = currentQty + delta
     if (newQty < 1) { return }
 
-    this.spinner.show()
-    this.cartService.addToCart(bookId, delta).subscribe({
-      next: (res) => {
-        this.cart = res.data
-        this.spinner.hide()
-        this.cdr.detectChanges()
-      },
+    this.cart.update((current) => {
+      if (!current) { return null }
+
+      const updatedItems = current.items.map((item) => {
+        if (item.book.id === bookId) {
+          return {...item, quantity: newQty}
+        }
+        return item
+      })
+
+      const newTotal = updatedItems.reduce((acc, item) => acc + (item.quantity * item.book.price), 0)
+
+      return {...current, items: updatedItems, totalAmount: newTotal}
+    })
+
+    this.cartService.upsertToCart(bookId, newQty).subscribe({
+      next: res => this.cart.set(res.data),
+      error: () => this.loadCart(),
     })
   }
 
@@ -60,15 +71,14 @@ export class Cart implements OnInit {
     this.spinner.show()
     this.cartService.removeFromCart(bookId).subscribe({
       next: (res) => {
-        this.cart = res.data
+        this.cart.set(res.data)
         this.spinner.hide()
-        this.cdr.detectChanges()
       },
+      error: () => this.spinner.hide(),
     })
   }
 
   proceedToCheckout() {
-    // TODO, figure out checkout
     this.router.navigate(['/checkout'])
   }
 }

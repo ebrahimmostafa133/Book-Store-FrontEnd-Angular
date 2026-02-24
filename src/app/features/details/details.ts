@@ -75,7 +75,7 @@ export class Details implements OnInit {
   }
 
   addToCart(bookId: string): void {
-    this.cartService.addToCart(bookId, 1).subscribe({
+    this.cartService.upsertToCart(bookId, 1).subscribe({
       next: () => {
         this.toastr.success('Book added to cart successfully!')
       },
