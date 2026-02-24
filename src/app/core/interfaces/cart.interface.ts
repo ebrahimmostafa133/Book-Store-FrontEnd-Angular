@@ -1,11 +1,7 @@
+import type {Book} from './book.interface'
+
 export interface CartItem {
-  book: {
-    id: string
-    title: string
-    price: number
-    coverImage?: string
-    stock: number
-  }
+  book: Book
   quantity: number
   itemTotal: number
 }
