@@ -7,6 +7,7 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {Router, RouterModule} from '@angular/router'
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner'
 import {CartService} from '../../core/services/cart.service'
+import {OrdersService} from '../../core/services/orders.service'
 
 @Component({
   selector: 'app-checkout',
@@ -18,6 +19,7 @@ import {CartService} from '../../core/services/cart.service'
 export class Checkout implements OnInit {
   private fb = inject(FormBuilder)
   private cartService = inject(CartService)
+  private ordersService = inject(OrdersService)
   private spinner = inject(NgxSpinnerService)
   private router = inject(Router)
 
@@ -77,47 +79,31 @@ export class Checkout implements OnInit {
     this.isProcessing.set(true)
     this.spinner.show()
 
-    const orderPayload = {
-      shippingInfo: {
-        firstName: this.checkoutForm.get('firstName')?.value,
-        lastName: this.checkoutForm.get('lastName')?.value,
-        email: this.checkoutForm.get('email')?.value,
-        phone: this.checkoutForm.get('phone')?.value,
-        address: this.checkoutForm.get('address')?.value,
-        city: this.checkoutForm.get('city')?.value,
-        state: this.checkoutForm.get('state')?.value,
-        zipCode: this.checkoutForm.get('zipCode')?.value,
-        country: this.checkoutForm.get('country')?.value,
-      },
-      paymentInfo: {
-        cardholderName: this.checkoutForm.get('cardholderName')?.value,
-        cardNumber: this.checkoutForm.get('cardNumber')?.value,
-        expiryDate: this.checkoutForm.get('expiryDate')?.value,
-        cvv: this.checkoutForm.get('cvv')?.value,
-      },
-      cartId: this.cart()?.id,
-      totalAmount: this.cart()?.totalAmount,
+    // Prepare shipping address in the format expected by backend
+    const shippingAddress = {
+      street: this.checkoutForm.get('address')?.value,
+      city: this.checkoutForm.get('city')?.value,
+      zipCode: this.checkoutForm.get('zipCode')?.value,
     }
 
-    // TODO: Replace with actual API call
-    // this.checkoutService.placeOrder(orderPayload).subscribe({
-    //   next: (res) => {
-    //     this.orderPlaced.set(true)
-    //     this.isProcessing.set(false)
-    //     this.spinner.hide()
-    //   },
-    //   error: () => {
-    //     this.isProcessing.set(false)
-    //     this.spinner.hide()
-    //   },
-    // })
+    // For now, using 'Stripe' as payment method (can be extended to support other methods)
+    const paymentMethod = 'Stripe'
 
-    // Mock success for demo
-    setTimeout(() => {
-      this.orderPlaced.set(true)
-      this.isProcessing.set(false)
-      this.spinner.hide()
-    }, 2000)
+    // Place the order via the backend API
+    this.ordersService.placeOrder(shippingAddress, paymentMethod).subscribe({
+      next: () => {
+        this.orderPlaced.set(true)
+        this.isProcessing.set(false)
+        this.spinner.hide()
+      },
+      error: (err) => {
+        console.error('Error placing order:', err)
+        this.isProcessing.set(false)
+        this.spinner.hide()
+        // eslint-disable-next-line no-alert
+        alert('Failed to place order. Please try again.')
+      },
+    })
   }
 
   continueShopping() {
