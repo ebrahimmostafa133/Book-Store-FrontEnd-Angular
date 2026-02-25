@@ -1,1 +1,227 @@
-<p>checkout works!</p>
+<div class="container mx-auto p-6 min-h-screen bg-gray-50">
+  <h1 class="text-4xl font-bold mb-8 text-gray-800">Checkout</h1>
+
+  <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+  @if (!orderPlaced()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Checkout Form -->
+      <div class="lg:col-span-2">
+        <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" class="space-y-8">
+          
+          <!-- Shipping Information -->
+          <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Shipping Information</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">First Name *</label>
+                <input type="text" formControlName="firstName" 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="John">
+                @if (checkoutForm.get('firstName')?.invalid && checkoutForm.get('firstName')?.touched) {
+                  <p class="text-red-500 text-xs mt-1">First name is required</p>
+                }
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name *</label>
+                <input type="text" formControlName="lastName"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="Doe">
+                @if (checkoutForm.get('lastName')?.invalid && checkoutForm.get('lastName')?.touched) {
+                  <p class="text-red-500 text-xs mt-1">Last name is required</p>
+                }
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                <input type="email" formControlName="email"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="john@example.com">
+                @if (checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched) {
+                  <p class="text-red-500 text-xs mt-1">Valid email is required</p>
+                }
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Phone *</label>
+                <input type="tel" formControlName="phone"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="1234567890">
+                @if (checkoutForm.get('phone')?.invalid && checkoutForm.get('phone')?.touched) {
+                  <p class="text-red-500 text-xs mt-1">Phone must be at least 10 digits</p>
+                }
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Address *</label>
+              <input type="text" formControlName="address"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                     placeholder="123 Main St">
+              @if (checkoutForm.get('address')?.invalid && checkoutForm.get('address')?.touched) {
+                <p class="text-red-500 text-xs mt-1">Address is required</p>
+              }
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">City *</label>
+                <input type="text" formControlName="city"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="New York">
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">State *</label>
+                <input type="text" formControlName="state"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="NY">
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Zip Code *</label>
+                <input type="text" formControlName="zipCode"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="10001">
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Country *</label>
+                <input type="text" formControlName="country"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="USA">
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Information -->
+          <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Payment Information</h2>
+            
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Cardholder Name *</label>
+              <input type="text" formControlName="cardholderName"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                     placeholder="John Doe">
+              @if (checkoutForm.get('cardholderName')?.invalid && checkoutForm.get('cardholderName')?.touched) {
+                <p class="text-red-500 text-xs mt-1">Cardholder name is required</p>
+              }
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Card Number *</label>
+              <input type="text" formControlName="cardNumber" maxlength="16"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                     placeholder="1234567890123456">
+              @if (checkoutForm.get('cardNumber')?.invalid && checkoutForm.get('cardNumber')?.touched) {
+                <p class="text-red-500 text-xs mt-1">Card number must be 16 digits</p>
+              }
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Expiry Date *</label>
+                <input type="text" formControlName="expiryDate" maxlength="5"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="MM/YY">
+                @if (checkoutForm.get('expiryDate')?.invalid && checkoutForm.get('expiryDate')?.touched) {
+                  <p class="text-red-500 text-xs mt-1">Format: MM/YY</p>
+                }
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">CVV *</label>
+                <input type="text" formControlName="cvv" maxlength="4"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="123">
+                @if (checkoutForm.get('cvv')?.invalid && checkoutForm.get('cvv')?.touched) {
+                  <p class="text-red-500 text-xs mt-1">CVV must be 3-4 digits</p>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms & Conditions -->
+          <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+            <label class="flex items-center space-x-3 cursor-pointer">
+              <input type="checkbox" formControlName="agreeTerms"
+                     class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+              <span class="text-gray-700">I agree to the <a href="#" class="text-indigo-600 hover:underline">Terms & Conditions</a> *</span>
+            </label>
+            @if (checkoutForm.get('agreeTerms')?.invalid && checkoutForm.get('agreeTerms')?.touched) {
+              <p class="text-red-500 text-xs mt-2">You must agree to terms</p>
+            }
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" [disabled]="!checkoutForm.valid || isProcessing()"
+                  class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-[0.98]">
+            {{ isProcessing() ? 'Processing...' : 'Place Order' }}
+          </button>
+        </form>
+      </div>
+
+      <!-- Order Summary Sidebar -->
+      <aside class="h-fit sticky top-6">
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+          <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Order Summary</h2>
+          
+          @if (cart()) {
+            <div class="space-y-3 mb-4 max-h-64 overflow-y-auto">
+              @for (item of cart()?.items; track item.book.id) {
+                <div class="flex justify-between text-sm text-gray-600 pb-2 border-b">
+                  <div>
+                    <p class="font-medium text-gray-800">{{ item.book.name }}</p>
+                    <p class="text-xs text-gray-500">Qty: {{ item.quantity }}</p>
+                  </div>
+                  <p class="font-semibold">{{ item.itemTotal | currency }}</p>
+                </div>
+              }
+            </div>
+
+            <div class="space-y-3 border-t pt-4">
+              <div class="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span>{{ cart()?.totalAmount | currency }}</span>
+              </div>
+              <div class="flex justify-between text-gray-600">
+                <span>Shipping</span>
+                <span class="text-green-600 font-medium">Free</span>
+              </div>
+              <div class="flex justify-between text-gray-600">
+                <span>Tax</span>
+                <span>$0.00</span>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center py-4 border-t mt-4">
+              <span class="text-lg font-bold text-gray-700">Total</span>
+              <span class="text-2xl font-extrabold text-indigo-700">{{ cart()?.totalAmount | currency }}</span>
+            </div>
+          }
+        </div>
+      </aside>
+    </div>
+  } @else {
+    <!-- Order Success Message -->
+    <div class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl shadow-md border border-gray-100">
+      <div class="bg-green-50 p-8 rounded-full mb-6">
+        <i class="fas fa-check-circle fa-5x text-green-500"></i>
+      </div>
+      <h2 class="text-3xl font-bold text-gray-800">Order Placed Successfully!</h2>
+      <p class="text-gray-500 mt-2 mb-8 max-w-md text-center">
+        Thank you for your purchase. Your order has been confirmed and will be shipped soon.
+      </p>
+      <div class="bg-gray-50 p-4 rounded-lg mb-8 w-full max-w-md">
+        <p class="text-sm text-gray-600">Order ID: <span class="font-bold text-gray-800">#ORD-{{ (cart()?.id || '').substring(0, 8) }}</span></p>
+        <p class="text-sm text-gray-600 mt-2">Total Amount: <span class="font-bold text-gray-800">{{ cart()?.totalAmount | currency }}</span></p>
+      </div>
+      <button (click)="continueShopping()"
+              class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg">
+        Continue Shopping
+      </button>
+    </div>
+  }
+</div>
