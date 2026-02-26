@@ -36,7 +36,7 @@
               <img class="mx-auto h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" [src]="book.bookCover" [alt]="book.name" />
             </a>
             <div class="absolute top-2 right-2">
-              <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ book.category }}</span>
+              <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ book.category.name }}</span>
             </div>
           </div>
           
@@ -45,7 +45,7 @@
               <a [routerLink]="['/details', book.id]">{{ book.name }}</a>
             </h3>
             
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 truncate">by {{ book.author }}</p>
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 truncate">by {{ book.author.name }}</p>
 
             <div class="mt-2 flex items-center gap-2">
               <div class="flex items-center">

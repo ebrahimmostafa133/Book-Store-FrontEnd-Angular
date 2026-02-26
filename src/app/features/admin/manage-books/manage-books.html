@@ -35,10 +35,10 @@
               {{ book.name }}
             </td>
             <td class="px-6 py-4">
-              {{ getAuthorName(book.author) }}
+              {{ book.author.name }}
             </td>
             <td class="px-6 py-4">
-              {{ getCategoryName(book.category) }}
+              {{ book.category.name }}
             </td>
             <td class="px-6 py-4">
               ${{ book.price }}

@@ -22,11 +22,11 @@ export class BooksService {
     return this.httpClient.get<{data: Book}>(`${this.apiUrl}/${id}`)
   }
 
-  addBook(book: Book) {
+  addBook(book: FormData) {
     return this.httpClient.post<{data: Book}>(this.apiUrl, book)
   }
 
-  updateBook(id: string, payload: Partial<Book>) {
+  updateBook(id: string, payload: FormData | Partial<Book>) {
     return this.httpClient.patch<{data: Book}>(`${this.apiUrl}/${id}`, payload)
   }
 

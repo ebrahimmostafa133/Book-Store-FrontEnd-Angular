@@ -33,6 +33,7 @@ export class ManageBooks implements OnInit {
   editingBookId: string | null = null
   isLoading = false
   previewImage: string | null = null
+  selectedFile: File | null = null
 
   constructor() {
     this.bookForm = this.fb.group({
@@ -83,24 +84,12 @@ export class ManageBooks implements OnInit {
     })
   }
 
-  getAuthorName(authorId: any): string {
-    if (typeof authorId === 'object' && authorId?.name) { return authorId.name }
-    const author = this.authors.find(a => a.id === authorId)
-    return author ? author.name : 'Unknown Author'
-  }
-
-  getCategoryName(categoryId: any): string {
-    if (typeof categoryId === 'object' && categoryId?.name) { return categoryId.name }
-    const cat = this.categories.find(c => c.id === categoryId)
-    return cat ? cat.name : 'Unknown Category'
-  }
-
   openModal(book?: Book) {
     this.isModalOpen = true
     if (book) {
       this.editingBookId = book.id
-      const authorId = typeof book.author === 'object' ? (book.author as any).id : book.author
-      const categoryId = typeof book.category === 'object' ? (book.category as any).id : book.category
+      const authorId = book.author.id
+      const categoryId = book.category.id
 
       this.bookForm.patchValue({
         name: book.name || (book as any).title,
@@ -116,6 +105,7 @@ export class ManageBooks implements OnInit {
       this.editingBookId = null
       this.bookForm.reset({stock: 1, price: 0})
       this.previewImage = null
+      this.selectedFile = null
     }
   }
 
@@ -124,18 +114,15 @@ export class ManageBooks implements OnInit {
     this.editingBookId = null
     this.bookForm.reset()
     this.previewImage = null
+    this.selectedFile = null
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0]
     if (file) {
-      // In a standard web browser, `file.path` is blocked for security.
-      // However, Electron and some environments expose `file.path`.
-      // If `file.path` doesn't exist, we fall back to the raw file name.
-      const filePath = file.path || `/home/benzema/Desktop/${file.name}`
-
+      this.selectedFile = file
       this.previewImage = URL.createObjectURL(file)
-      this.bookForm.patchValue({bookCover: filePath})
+      this.bookForm.patchValue({bookCover: file.name})
       this.bookForm.get('bookCover')?.markAsTouched()
       this.bookForm.get('bookCover')?.markAsDirty()
     }
@@ -145,11 +132,23 @@ export class ManageBooks implements OnInit {
     if (this.bookForm.invalid) { return }
 
     this.isLoading = true
-    const bookData = this.bookForm.value
-    console.log('Book submission request data:', bookData)
+    const formData = new FormData()
+    const formValues = this.bookForm.value
+
+    Object.keys(formValues).forEach((key) => {
+      if (key !== 'bookCover') {
+        formData.append(key, formValues[key])
+      }
+    })
+
+    if (this.selectedFile) {
+      formData.append('bookCover', this.selectedFile)
+    }
+
+    console.log('Book submission request data (FormData):', formData)
 
     if (this.editingBookId) {
-      this.booksService.updateBook(this.editingBookId, bookData).subscribe({
+      this.booksService.updateBook(this.editingBookId, formData).subscribe({
         next: () => {
           this.toastr.success('Book updated successfully')
           this.closeModal()
@@ -164,7 +163,7 @@ export class ManageBooks implements OnInit {
         },
       })
     } else {
-      this.booksService.addBook(bookData).subscribe({
+      this.booksService.addBook(formData).subscribe({
         next: () => {
           this.toastr.success('Book added successfully')
           this.closeModal()

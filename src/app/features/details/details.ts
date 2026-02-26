@@ -1,5 +1,6 @@
 import type {OnInit} from '@angular/core'
 import type {Book} from '../../core/interfaces/book.interface'
+import type {Review} from '../../core/interfaces/review.interface'
 
 import {CurrencyPipe, DatePipe} from '@angular/common'
 import {Component, inject, signal} from '@angular/core'
@@ -7,12 +8,16 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {ActivatedRoute} from '@angular/router'
 import {ToastrService} from 'ngx-toastr'
 
+import {AuthService} from '../../core/services/auth.service'
 import {BooksService} from '../../core/services/books.service'
 import {CartService} from '../../core/services/cart.service'
 
+import {ReviewService} from '../../core/services/review.service'
+import {ConfirmationModal} from '../../shared/components/confirmation-modal/confirmation-modal.component'
+
 @Component({
   selector: 'app-details',
-  imports: [CurrencyPipe, DatePipe, ReactiveFormsModule],
+  imports: [CurrencyPipe, DatePipe, ReactiveFormsModule, ConfirmationModal],
   templateUrl: './details.html',
   styleUrl: './details.css',
 })
@@ -20,13 +25,20 @@ export class Details implements OnInit {
   private readonly route = inject(ActivatedRoute)
   private readonly booksService = inject(BooksService)
   private readonly cartService = inject(CartService)
+  private readonly reviewService = inject(ReviewService)
+  private readonly authService = inject(AuthService)
   private readonly toastr = inject(ToastrService)
 
   book = signal<Book | null>(null)
   isLoading = signal(true)
 
-  // Mock Reviews configuration
-  reviews = signal<{id: number, user: string, rating: number, comment: string, date: Date}[]>([])
+  reviews = signal<Review[]>([])
+  isEditing = signal(false)
+  editingReviewId = signal<string | null>(null)
+
+  // Modal State
+  isDeleteModalOpen = signal(false)
+  reviewToDeleteId = signal<string | null>(null)
 
   private readonly fb = inject(FormBuilder)
   reviewForm = this.fb.group({
@@ -38,19 +50,15 @@ export class Details implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')
     if (id) {
       this.booksService.getBookById(id).subscribe({
-        next: (res) => {
+        next: (res: {data: Book}) => {
           this.book.set(res.data)
           this.isLoading.set(false)
 
-          if (res.data) {
-            // Load some dummy reviews for demonstration
-            this.reviews.set([
-              {id: 1, user: 'Alice Smith', rating: 5, comment: 'Absolutely loved this book! Highly recommended.', date: new Date('2026-01-15T10:30:00')},
-              {id: 2, user: 'John Doe', rating: 4, comment: 'Great read, though the ending felt a bit rushed.', date: new Date('2026-02-05T14:45:00')},
-            ])
+          if (res.data?.reviews) {
+            this.reviews.set(res.data.reviews)
           }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Error fetching book details', err)
           this.isLoading.set(false)
         },
@@ -60,18 +68,105 @@ export class Details implements OnInit {
     }
   }
 
+  canEdit(review: Review): boolean {
+    return this.authService.userId === review.user.id
+  }
+
+  canDelete(review: Review): boolean {
+    return this.authService.userId === review.user.id
+  }
+
+  startEdit(review: Review): void {
+    this.isEditing.set(true)
+    this.editingReviewId.set(review.id)
+    this.reviewForm.patchValue({
+      rating: review.rating,
+      comment: review.comment || '',
+    })
+    // Scroll to form
+    const formElement = document.getElementById('review-form')
+    formElement?.scrollIntoView({behavior: 'smooth'})
+  }
+
+  cancelEdit(): void {
+    this.isEditing.set(false)
+    this.editingReviewId.set(null)
+    this.reviewForm.reset({rating: 5, comment: ''})
+  }
+
   submitReview(): void {
-    if (this.reviewForm.valid && this.book()) {
-      const newReview = {
-        id: this.reviews().length + 1,
-        user: 'Current User', // In a real app, this would come from an auth service
+    const currentBook = this.book()
+    if (this.reviewForm.valid && currentBook) {
+      const reviewData = {
         rating: this.reviewForm.value.rating ?? 5,
         comment: this.reviewForm.value.comment ?? '',
-        date: new Date(),
       }
-      this.reviews.update(reviews => [newReview, ...reviews])
-      this.reviewForm.reset({rating: 5, comment: ''})
+
+      const bookId = currentBook.id
+
+      if (this.isEditing() && this.editingReviewId()) {
+        this.reviewService.updateReview(this.editingReviewId()!, reviewData).subscribe({
+          next: (res: {data: Review}) => {
+            this.toastr.success('Review updated successfully!')
+            this.reviews.update(prev => prev.map(r => r.id === res.data.id ? res.data : r))
+            this.cancelEdit()
+            this.refreshBookStats(bookId)
+          },
+          error: (err: any) => {
+            this.toastr.error(err.error?.message || 'Failed to update review.')
+          },
+        })
+      } else {
+        this.reviewService.createReview({...reviewData, book: bookId}).subscribe({
+          next: (res: {data: Review}) => {
+            this.toastr.success('Review submitted successfully!')
+            this.reviews.update(prev => [res.data, ...prev])
+            this.reviewForm.reset({rating: 5, comment: ''})
+            this.refreshBookStats(bookId)
+          },
+          error: (err: any) => {
+            this.toastr.error(err.error?.message || 'Failed to submit review.')
+          },
+        })
+      }
     }
+  }
+
+  private refreshBookStats(bookId: string): void {
+    this.booksService.getBookById(bookId).subscribe((refreshRes: {data: Book}) => {
+      this.book.set(refreshRes.data)
+    })
+  }
+
+  deleteReview(reviewId: string): void {
+    this.reviewToDeleteId.set(reviewId)
+    this.isDeleteModalOpen.set(true)
+  }
+
+  confirmDelete(): void {
+    const reviewId = this.reviewToDeleteId()
+    if (!reviewId) { return }
+
+    this.reviewService.deleteReview(reviewId).subscribe({
+      next: () => {
+        this.toastr.success('Review deleted successfully!')
+        this.reviews.update(prev => prev.filter(r => r.id !== reviewId))
+        const currentBook = this.book()
+        if (currentBook) {
+          this.refreshBookStats(currentBook.id)
+        }
+        this.closeDeleteModal()
+      },
+      error: (err: any) => {
+        this.toastr.error(err.error?.message || 'Failed to delete review.')
+        this.closeDeleteModal()
+      },
+    })
+  }
+
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen.set(false)
+    this.reviewToDeleteId.set(null)
   }
 
   addToCart(bookId: string): void {
@@ -79,7 +174,7 @@ export class Details implements OnInit {
       next: () => {
         this.toastr.success('Book added to cart successfully!')
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error adding book to cart', err)
         this.toastr.error('Failed to add book to cart.')
       },
