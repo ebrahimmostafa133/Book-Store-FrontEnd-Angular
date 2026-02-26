@@ -84,24 +84,12 @@ export class ManageBooks implements OnInit {
     })
   }
 
-  getAuthorName(authorId: any): string {
-    if (typeof authorId === 'object' && authorId?.name) { return authorId.name }
-    const author = this.authors.find(a => a.id === authorId)
-    return author ? author.name : 'Unknown Author'
-  }
-
-  getCategoryName(categoryId: any): string {
-    if (typeof categoryId === 'object' && categoryId?.name) { return categoryId.name }
-    const cat = this.categories.find(c => c.id === categoryId)
-    return cat ? cat.name : 'Unknown Category'
-  }
-
   openModal(book?: Book) {
     this.isModalOpen = true
     if (book) {
       this.editingBookId = book.id
-      const authorId = typeof book.author === 'object' ? (book.author as any).id : book.author
-      const categoryId = typeof book.category === 'object' ? (book.category as any).id : book.category
+      const authorId = book.author.id
+      const categoryId = book.category.id
 
       this.bookForm.patchValue({
         name: book.name || (book as any).title,

@@ -8,6 +8,7 @@ import {tap} from 'rxjs'
 import {environment} from '../../../environments/environment'
 
 interface DecodedToken {
+  id: string
   role: 'admin' | 'user'
   [key: string]: any
 }
@@ -37,6 +38,10 @@ export class AuthService {
 
   get userRole(): 'admin' | 'user' | null {
     return this.decodedToken?.role ?? null
+  }
+
+  get userId(): string | null {
+    return this.decodedToken?.id ?? null
   }
 
   handleAuthSuccess(token: string) {
