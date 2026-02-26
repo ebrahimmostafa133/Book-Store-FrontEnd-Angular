@@ -1,14 +1,15 @@
 import type {OnInit} from '@angular/core'
 import type {Author} from '../../core/interfaces/author.interface'
 import {isPlatformBrowser} from '@angular/common'
-import {Component, inject, PLATFORM_ID, signal} from '@angular/core'
+import {Component, computed, inject, PLATFORM_ID, signal} from '@angular/core'
+import {FormsModule} from '@angular/forms'
 import {RouterLink} from '@angular/router'
 import {NgxPaginationModule} from 'ngx-pagination'
 import {AuthorsService} from '../../core/services/authors.service'
 
 @Component({
   selector: 'app-authors',
-  imports: [RouterLink, NgxPaginationModule],
+  imports: [RouterLink, NgxPaginationModule, FormsModule],
   templateUrl: './authors.html',
   styleUrl: './authors.css',
 })
@@ -21,6 +22,13 @@ export class Authors implements OnInit {
   totalPages = signal(1)
   totalItems = signal(0)
   isLoading = signal(true)
+  searchTerm = signal('')
+
+  filteredAuthors = computed(() => {
+    const term = this.searchTerm().toLowerCase()
+    if (!term) { return this.authors() }
+    return this.authors().filter(author => author.name.toLowerCase().includes(term))
+  })
 
   ngOnInit(): void {
     this.loadAuthors()

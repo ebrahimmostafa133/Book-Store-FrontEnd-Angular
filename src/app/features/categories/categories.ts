@@ -1,14 +1,15 @@
 import type {OnInit} from '@angular/core'
 import type {Category} from '../../core/interfaces/category.interface'
 import {isPlatformBrowser} from '@angular/common'
-import {Component, inject, PLATFORM_ID, signal} from '@angular/core'
+import {Component, computed, inject, PLATFORM_ID, signal} from '@angular/core'
+import {FormsModule} from '@angular/forms'
 import {RouterLink} from '@angular/router'
 import {NgxPaginationModule} from 'ngx-pagination'
 import {CategoriesService} from '../../core/services/categories.service'
 
 @Component({
   selector: 'app-categories',
-  imports: [RouterLink, NgxPaginationModule],
+  imports: [RouterLink, NgxPaginationModule, FormsModule],
   templateUrl: './categories.html',
   styleUrl: './categories.css',
 })
@@ -22,6 +23,13 @@ export class Categories implements OnInit {
   totalPages = signal(1)
   totalItems = signal(0)
   isLoading = signal(true)
+  searchTerm = signal('')
+
+  filteredCategories = computed(() => {
+    const term = this.searchTerm().toLowerCase()
+    if (!term) { return this.categories() }
+    return this.categories().filter(cat => cat.name.toLowerCase().includes(term))
+  })
 
   ngOnInit(): void {
     this.loadCategories()

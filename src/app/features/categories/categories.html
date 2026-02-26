@@ -6,9 +6,21 @@
       <p class="mt-2 text-lg text-gray-500 dark:text-gray-400">Explore books across various genres and topics.</p>
     </div>
 
+    <div class="mb-8 flex justify-center w-full max-w-2xl mx-auto">
+      <input 
+        type="text" 
+        placeholder="Search by category name..." 
+        class="border p-2 w-full 
+               rounded border-green-500 focus:outline-none 
+               focus:ring-2 focus:ring-green-500 focus:border-transparent
+               dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400 dark:border-green-400"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)">
+    </div>
+
     <!-- Categories Grid -->
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      @for (category of categories() | paginate: { id: 'cat', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track category.id) {
+      @for (category of filteredCategories() | paginate: { id: 'cat', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track category.id) {
         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 hover:shadow-lg transition-shadow duration-300 group flex flex-col">
           <div class="flex items-center justify-between mb-4">
             <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors duration-200">
