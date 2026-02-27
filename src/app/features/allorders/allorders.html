@@ -12,6 +12,7 @@
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" class="px-6 py-4 font-semibold">Order ID</th>
+              <th scope="col" class="px-6 py-4 font-semibold text-right">Receipt</th>
               <th scope="col" class="px-6 py-4 font-semibold">Date</th>
               <th scope="col" class="px-6 py-4 font-semibold">Status</th>
               <th scope="col" class="px-6 py-4 font-semibold">Total</th>
@@ -23,6 +24,11 @@
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200">
                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                   #{{ order.id.slice(-8).toUpperCase() }}
+                </td>
+                <td class="px-6 py-4 text-right whitespace-nowrap">
+                  <button (click)="openReceipt(order)" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium">
+                    View Receipt
+                  </button>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   {{ order.createdAt | date:'mediumDate' }}
@@ -66,4 +72,50 @@
       </div>
     }
   </div>
+  @if (selectedOrder(); as order) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Order Receipt</h2>
+            <button (click)="closeReceipt()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+              <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+          </div>
+
+          <div class="border-b border-dashed border-gray-200 dark:border-gray-700 pb-4 mb-4">
+            <p class="text-sm text-gray-500">Order ID: <span class="text-gray-900 dark:text-white font-mono">#{{ order.id }}</span></p>
+            <p class="text-sm text-gray-500">Date: <span class="text-gray-900 dark:text-white">{{ order.createdAt | date:'longDate' }}</span></p>
+          </div>
+
+          <div class="space-y-4 mb-6">
+            @for (item of order.items; track item.book.id) {
+              <div class="flex justify-between items-center">
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">{{ item.book.name }}</p>
+                  <p class="text-xs text-gray-500">Qty: {{ item.quantity }} x {{ item.priceAtPurchase | currency }}</p>
+                </div>
+                <span class="text-gray-900 dark:text-white font-semibold">{{ (item.quantity * item.priceAtPurchase) | currency }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg space-y-2 mb-6">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Shipping to:</span>
+              <span class="text-gray-900 dark:text-white text-right">{{ order.shippingAddress.city }}, {{ order.shippingAddress.zipCode }}</span>
+            </div>
+            <div class="flex justify-between text-lg font-bold pt-2 border-t border-gray-200 dark:border-gray-600">
+              <span class="text-gray-900 dark:text-white">Total</span>
+              <span class="text-blue-600 dark:text-blue-400">{{ order.totalAmount | currency }}</span>
+            </div>
+          </div>
+
+          <button (click)="closeReceipt()" class="w-full py-3 bg-gray-900 dark:bg-white dark:text-gray-900 text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </section>

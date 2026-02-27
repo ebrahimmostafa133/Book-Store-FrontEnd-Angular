@@ -19,7 +19,7 @@ export interface Order {
 
 export interface OrderItem {
   id?: string
-  book: Book | string
+  book: Book
   quantity: number
   priceAtPurchase: number
 }
