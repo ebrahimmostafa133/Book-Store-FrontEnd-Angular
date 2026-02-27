@@ -8,6 +8,8 @@ import {Router, RouterModule} from '@angular/router'
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner'
 import {CartService} from '../../core/services/cart.service'
 import {CheckoutService} from '../../core/services/checkout.service'
+import {OrdersService} from '../../core/services/orders.service'
+import {UserService} from '../../core/services/user.service'
 
 @Component({
   selector: 'app-checkout',
@@ -20,6 +22,8 @@ export class Checkout implements OnInit {
   private fb = inject(FormBuilder)
   private cartService = inject(CartService)
   private checkoutService = inject(CheckoutService)
+  private ordersService = inject(OrdersService)
+  private userService = inject(UserService)
   private spinner = inject(NgxSpinnerService)
   private router = inject(Router)
 
@@ -31,6 +35,24 @@ export class Checkout implements OnInit {
   ngOnInit() {
     this.initForm()
     this.loadCart()
+    this.loadUserProfile()
+  }
+
+  loadUserProfile() {
+    this.userService.getUserProfile().subscribe({
+      next: (res) => {
+        if (res.data) {
+          this.checkoutForm.patchValue({
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
+            email: res.data.email,
+          })
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load user profile for checkout auto-fill', err)
+      },
+    })
   }
 
   initForm() {
@@ -41,16 +63,9 @@ export class Checkout implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern(/^\d{10,}$/)]],
       address: ['', [Validators.required, Validators.minLength(5)]],
-      city: ['', [Validators.required]],
-      state: ['', [Validators.required]],
-      zipCode: ['', [Validators.required, Validators.pattern(/^\d{5,}$/)]],
-      country: ['', [Validators.required]],
 
-      // Payment Information
-      cardholderName: ['', [Validators.required, Validators.minLength(2)]],
-      cardNumber: ['', [Validators.required, Validators.pattern(/^\d{16}$/)]],
-      expiryDate: ['', [Validators.required, Validators.pattern(/^\d{2}\/\d{2}$/)]],
-      cvv: ['', [Validators.required, Validators.pattern(/^\d{3,4}$/)]],
+      // Payment Selection
+      paymentMethod: ['COD', [Validators.required]],
 
       // Additional
       agreeTerms: [false, [Validators.requiredTrue]],
@@ -79,28 +94,37 @@ export class Checkout implements OnInit {
     this.isProcessing.set(true)
     this.spinner.show()
 
-    // Prepare shipping address in the format expected by backend
+    // Prepare shipping address
     const shippingAddress = {
       street: this.checkoutForm.get('address')?.value,
-      city: this.checkoutForm.get('city')?.value,
-      zipCode: this.checkoutForm.get('zipCode')?.value,
+      phone: this.checkoutForm.get('phone')?.value,
+      city: 'N/A',
+      zipCode: '00000',
     }
 
-    // Call the checkout service to create a payment intent
-    this.checkoutService.createPaymentIntent(shippingAddress).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.orderPlaced.set(true)
-        }
+    const paymentMethod = this.checkoutForm.get('paymentMethod')?.value
+
+    if (paymentMethod === 'visa') {
+      this.isProcessing.set(false)
+      this.spinner.hide()
+      this.router.navigate(['/payment'], {state: {shippingAddress}})
+      return
+    }
+
+    // Process Cash on Delivery
+    this.ordersService.placeOrder(shippingAddress, 'COD').subscribe({
+      next: () => {
+        this.cartService.getCart().subscribe() // Refetch cart to clear numbers after the order
         this.isProcessing.set(false)
         this.spinner.hide()
+        this.router.navigate(['/allorders']) // Redirecting to all orders on successful CoD
       },
       error: (err) => {
-        console.error('Error creating payment intent:', err)
+        console.error('Error placing order:', err)
         this.isProcessing.set(false)
         this.spinner.hide()
         // eslint-disable-next-line no-alert
-        alert('Failed to process payment. Please try again.')
+        alert('Failed to place order. Please try again.')
       },
     })
   }

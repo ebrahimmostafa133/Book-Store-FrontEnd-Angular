@@ -17,6 +17,7 @@ export const routes: Routes = [
       {path: 'books', loadComponent: () => import('./features/books/books').then(m => m.Books)},
       {path: 'cart', loadComponent: () => import('./features/cart/cart').then(m => m.Cart)},
       {path: 'checkout', loadComponent: () => import('./features/checkout/checkout').then(m => m.Checkout)},
+      {path: 'payment', loadComponent: () => import('./features/payment/payment').then(m => m.Payment)},
       {path: 'allorders', loadComponent: () => import('./features/allorders/allorders').then(m => m.Allorders)},
       {path: 'authors', loadComponent: () => import('./features/authors/authors').then(m => m.Authors)},
       {path: 'authors/:id', loadComponent: () => import('./features/authors/authors-books/authors-books').then(m => m.AuthorsBooks)},
