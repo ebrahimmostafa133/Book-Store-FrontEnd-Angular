@@ -62,3 +62,12 @@
     }
   </div>
 </section>
+
+<app-confirmation-modal
+  [isOpen]="isConfirmModalOpen()"
+  title="Delete Order"
+  message="Are you sure you want to delete this order? This action cannot be undone."
+  confirmText="Delete"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+></app-confirmation-modal>

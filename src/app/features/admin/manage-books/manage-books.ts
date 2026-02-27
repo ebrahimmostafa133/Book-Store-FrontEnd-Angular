@@ -10,10 +10,11 @@ import {ToastrService} from 'ngx-toastr'
 import {AuthorsService} from '../../../core/services/authors.service'
 import {BooksService} from '../../../core/services/books.service'
 import {CategoriesService} from '../../../core/services/categories.service'
+import {ConfirmationModal} from '../../../shared/components/confirmation-modal/confirmation-modal.component'
 
 @Component({
   selector: 'app-manage-books',
-  imports: [ReactiveFormsModule, NgxPaginationModule],
+  imports: [ReactiveFormsModule, NgxPaginationModule, ConfirmationModal],
   templateUrl: './manage-books.html',
   styleUrl: './manage-books.css',
 })
@@ -55,6 +56,9 @@ export class ManageBooks implements OnInit {
   isLoading = false
   previewImage: string | null = null
   selectedFile: File | null = null
+
+  isConfirmModalOpen = signal(false)
+  bookToDeleteId: string | null = null
 
   constructor() {
     this.bookForm = this.fb.group({
@@ -212,20 +216,32 @@ export class ManageBooks implements OnInit {
   }
 
   deleteBook(id: string) {
-    // eslint-disable-next-line no-alert
-    if (window.confirm('Are you sure you want to delete this book?')) {
-      this.booksService.deleteBook(id).subscribe({
-        next: () => {
-          this.toastr.success('Book deleted successfully')
-          this.books.update(books => books.filter(b => b.id !== id))
-          this.totalItems.update(count => count - 1)
-          this.cdr.detectChanges()
-        },
-        error: (_err) => {
-          this.toastr.error('Error deleting book')
-        },
-      })
+    this.bookToDeleteId = id
+    this.isConfirmModalOpen.set(true)
+  }
+
+  confirmDelete() {
+    if (!this.bookToDeleteId) {
+      return
     }
+
+    this.booksService.deleteBook(this.bookToDeleteId).subscribe({
+      next: () => {
+        this.toastr.success('Book deleted successfully')
+        this.books.update(books => books.filter(b => b.id !== this.bookToDeleteId))
+        this.totalItems.update(count => count - 1)
+        this.cancelDelete()
+        this.cdr.detectChanges()
+      },
+      error: (_err) => {
+        this.toastr.error('Error deleting book')
+      },
+    })
+  }
+
+  cancelDelete() {
+    this.isConfirmModalOpen.set(false)
+    this.bookToDeleteId = null
   }
 
   onPageChange(page: number) {

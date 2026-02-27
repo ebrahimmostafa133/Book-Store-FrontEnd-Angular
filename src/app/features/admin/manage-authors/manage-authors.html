@@ -85,3 +85,12 @@
     </div>
   </div>
 }
+
+<app-confirmation-modal
+  [isOpen]="isConfirmModalOpen()"
+  title="Delete Author"
+  message="Are you sure you want to delete this author? All their books will also be affected."
+  confirmText="Delete"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+></app-confirmation-modal>
