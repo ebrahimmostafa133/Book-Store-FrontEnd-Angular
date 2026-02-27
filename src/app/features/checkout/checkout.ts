@@ -7,7 +7,7 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {Router, RouterModule} from '@angular/router'
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner'
 import {CartService} from '../../core/services/cart.service'
-import {OrdersService} from '../../core/services/orders.service'
+import {CheckoutService} from '../../core/services/checkout.service'
 
 @Component({
   selector: 'app-checkout',
@@ -19,7 +19,7 @@ import {OrdersService} from '../../core/services/orders.service'
 export class Checkout implements OnInit {
   private fb = inject(FormBuilder)
   private cartService = inject(CartService)
-  private ordersService = inject(OrdersService)
+  private checkoutService = inject(CheckoutService)
   private spinner = inject(NgxSpinnerService)
   private router = inject(Router)
 
@@ -86,22 +86,21 @@ export class Checkout implements OnInit {
       zipCode: this.checkoutForm.get('zipCode')?.value,
     }
 
-    // For now, using 'Stripe' as payment method (can be extended to support other methods)
-    const paymentMethod = 'Stripe'
-
-    // Place the order via the backend API
-    this.ordersService.placeOrder(shippingAddress, paymentMethod).subscribe({
-      next: () => {
-        this.orderPlaced.set(true)
+    // Call the checkout service to create a payment intent
+    this.checkoutService.createPaymentIntent(shippingAddress).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.orderPlaced.set(true)
+        }
         this.isProcessing.set(false)
         this.spinner.hide()
       },
       error: (err) => {
-        console.error('Error placing order:', err)
+        console.error('Error creating payment intent:', err)
         this.isProcessing.set(false)
         this.spinner.hide()
         // eslint-disable-next-line no-alert
-        alert('Failed to place order. Please try again.')
+        alert('Failed to process payment. Please try again.')
       },
     })
   }
