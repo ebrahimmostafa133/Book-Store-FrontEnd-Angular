@@ -14,6 +14,7 @@ export class Allorders implements OnInit {
   private readonly ordersService = inject(OrdersService)
 
   orders = signal<Order[]>([])
+  selectedOrder = signal<Order | null>(null)
   isLoading = signal(true)
 
   ngOnInit(): void {
@@ -44,5 +45,13 @@ export class Allorders implements OnInit {
       case 'cancelled': return `${base}bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300`
       default: return `${base}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300`
     }
+  }
+
+  openReceipt(order: Order) {
+    this.selectedOrder.set(order)
+  }
+
+  closeReceipt() {
+    this.selectedOrder.set(null)
   }
 }
