@@ -9,16 +9,30 @@
       @if (isLoggedIn()) {
         
         @if (isUser()) {
-          <a routerLink="/cart" class="p-2 text-gray-600 hover:text-blue-700 relative">
+          <a routerLink="/cart" class="text-gray-600 hover:text-blue-700 relative">
             <i class="fa-solid fa-cart-shopping text-xl"></i>
           </a>
         }
+        @if (isUser()) {
+          <a routerLink="/profile" (click)="closeMenus()" class="block text-sm text-gray-700 hover:bg-gray-100">
+            <i class="fa-solid fa-circle-user text-xl"></i>
+          </a>
+        }
+        @if (isAdmin()) {
+          <a routerLink="/admin/profile" (click)="closeMenus()" class="block text-sm text-gray-700 hover:bg-gray-100">
+            <i class="fa-solid fa-circle-user text-xl"></i>
+          </a>
+        }
+        <button (click)="logout()" class="w-full text-left block text-sm text-red-600 hover:bg-gray-100">
+          <i class="fa-solid fa-right-from-bracket text-xl"></i>
+        </button>
 
-        <button (click)="toggleDropdown()" type="button" class="flex text-sm bg-gray-100 rounded-full focus:ring-4 focus:ring-gray-200" id="user-menu-button">
+        <!-- TODO: if we aren't using this dropdown we should probably delete it -->
+        <!-- <button (click)="toggleDropdown()" type="button" class="flex text-sm bg-gray-100 rounded-full focus:ring-4 focus:ring-gray-200" id="user-menu-button">
           <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white">
             <i class="fa-solid fa-user"></i>
           </div>
-        </button>
+        </button> -->
 
         <div class="z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-lg border absolute top-12 xl:right-[15%] lg:right-10 md:right-5  " [class.hidden]="!isDropdownOpen" id="user-dropdown">
           <div class="px-4 py-3">
