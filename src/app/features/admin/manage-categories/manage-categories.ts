@@ -6,10 +6,11 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {NgxPaginationModule} from 'ngx-pagination'
 import {ToastrService} from 'ngx-toastr'
 import {CategoriesService} from '../../../core/services/categories.service'
+import {ConfirmationModal} from '../../../shared/components/confirmation-modal/confirmation-modal.component'
 
 @Component({
   selector: 'app-manage-categories',
-  imports: [ReactiveFormsModule, NgxPaginationModule],
+  imports: [ReactiveFormsModule, NgxPaginationModule, ConfirmationModal],
   templateUrl: './manage-categories.html',
   styleUrl: './manage-categories.css',
 })
@@ -26,7 +27,10 @@ export class ManageCategories implements OnInit {
   isLoading = false
   currentPage = signal(1)
   totalItems = signal(0)
-  itemsPerPage = 2
+  itemsPerPage = 10
+
+  isConfirmModalOpen = signal(false)
+  categoryToDeleteId: string | null = null
 
   displayCategories = computed(() => {
     const total = this.totalItems()
@@ -142,21 +146,33 @@ export class ManageCategories implements OnInit {
   }
 
   deleteCategory(id: string) {
-    // eslint-disable-next-line no-alert
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      this.categoriesService.deleteCategory(id).subscribe({
-        next: () => {
-          this.toastr.success('Category deleted successfully')
-          this.categories.update(cats => cats.filter(c => c.id !== id))
-          this.totalItems.update(count => count - 1)
-          this.cdr.detectChanges()
-        },
-        error: (_err) => {
-          this.toastr.error('Error deleting category')
-          this.cdr.detectChanges()
-        },
-      })
+    this.categoryToDeleteId = id
+    this.isConfirmModalOpen.set(true)
+  }
+
+  confirmDelete() {
+    if (!this.categoryToDeleteId) {
+      return
     }
+
+    this.categoriesService.deleteCategory(this.categoryToDeleteId).subscribe({
+      next: () => {
+        this.toastr.success('Category deleted successfully')
+        this.categories.update(cats => cats.filter(c => c.id !== this.categoryToDeleteId))
+        this.totalItems.update(count => count - 1)
+        this.cancelDelete()
+        this.cdr.detectChanges()
+      },
+      error: (_err) => {
+        this.toastr.error('Error deleting category')
+        this.cdr.detectChanges()
+      },
+    })
+  }
+
+  cancelDelete() {
+    this.isConfirmModalOpen.set(false)
+    this.categoryToDeleteId = null
   }
 
   onPageChange(page: number) {

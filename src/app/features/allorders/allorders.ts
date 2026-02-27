@@ -29,7 +29,7 @@ export class Allorders implements OnInit {
     this.isLoading.set(true)
     this.ordersService.getMyOrders(this.currentPage(), this.itemsPerPage).subscribe({
       next: (res) => {
-        this.orders.set(res.data)
+        this.orders.set(res.orders)
         this.totalItems.set(res.totalItems)
         this.isLoading.set(false)
       },

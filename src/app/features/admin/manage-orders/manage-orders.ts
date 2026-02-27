@@ -5,10 +5,11 @@ import {ChangeDetectorRef, Component, computed, inject, signal} from '@angular/c
 import {NgxPaginationModule} from 'ngx-pagination'
 import {ToastrService} from 'ngx-toastr'
 import {OrdersService} from '../../../core/services/orders.service'
+import {ConfirmationModal} from '../../../shared/components/confirmation-modal/confirmation-modal.component'
 
 @Component({
   selector: 'app-manage-orders',
-  imports: [CommonModule, NgxPaginationModule],
+  imports: [CommonModule, NgxPaginationModule, ConfirmationModal],
   templateUrl: './manage-orders.html',
   styleUrl: './manage-orders.css',
 })
@@ -23,6 +24,9 @@ export class ManageOrders implements OnInit {
   currentPage = signal(1)
   totalItems = signal(0)
   itemsPerPage = 10
+
+  isConfirmModalOpen = signal(false)
+  orderToDeleteId: string | null = null
 
   displayOrders = computed(() => {
     const total = this.totalItems()
@@ -89,21 +93,33 @@ export class ManageOrders implements OnInit {
   }
 
   deleteOrder(id: string) {
-    // eslint-disable-next-line no-alert
-    if (window.confirm('Are you sure you want to delete this order?')) {
-      this.ordersService.deleteOrder(id).subscribe({
-        next: () => {
-          this.toastr.success('Order deleted successfully')
-          this.orders.update(orders => orders.filter(o => o.id !== id))
-          this.totalItems.update(count => count - 1)
-          this.cdr.detectChanges()
-        },
-        error: (_err) => {
-          this.toastr.error('Error deleting order')
-          this.cdr.detectChanges()
-        },
-      })
+    this.orderToDeleteId = id
+    this.isConfirmModalOpen.set(true)
+  }
+
+  confirmDelete() {
+    if (!this.orderToDeleteId) {
+      return
     }
+
+    this.ordersService.deleteOrder(this.orderToDeleteId).subscribe({
+      next: () => {
+        this.toastr.success('Order deleted successfully')
+        this.orders.update(orders => orders.filter(o => o.id !== this.orderToDeleteId))
+        this.totalItems.update(count => count - 1)
+        this.cancelDelete()
+        this.cdr.detectChanges()
+      },
+      error: (_err) => {
+        this.toastr.error('Error deleting order')
+        this.cdr.detectChanges()
+      },
+    })
+  }
+
+  cancelDelete() {
+    this.isConfirmModalOpen.set(false)
+    this.orderToDeleteId = null
   }
 
   onPageChange(page: number) {

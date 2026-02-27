@@ -82,3 +82,12 @@
     </div>
   </div>
 }
+
+<app-confirmation-modal
+  [isOpen]="isConfirmModalOpen()"
+  title="Delete Category"
+  message="Are you sure you want to delete this category? This might affect books in this category."
+  confirmText="Delete"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+></app-confirmation-modal>

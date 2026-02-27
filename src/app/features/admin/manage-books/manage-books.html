@@ -149,3 +149,12 @@
     </div>
   </div>
 }
+
+<app-confirmation-modal
+  [isOpen]="isConfirmModalOpen()"
+  title="Delete Book"
+  message="Are you sure you want to delete this book? This action cannot be undone."
+  confirmText="Delete"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+></app-confirmation-modal>

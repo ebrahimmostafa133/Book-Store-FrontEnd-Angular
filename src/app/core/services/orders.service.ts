@@ -1,6 +1,7 @@
 import type {Order} from '../interfaces/order.interface'
 import {HttpClient} from '@angular/common/http'
 import {inject, Injectable} from '@angular/core'
+import {map} from 'rxjs'
 import {environment} from '../../../environments/environment'
 
 @Injectable({
@@ -18,11 +19,19 @@ export class OrdersService {
   }
 
   getMyOrders(page: number = 1, limit: number = 12) {
-    return this.httpClient.get<{data: Order[], totalItems: number}>(`${this.apiUrl}/my-orders?page=${page}&limit=${limit}`)
+    return this.httpClient
+      .get<{data: {orders: Order[], totalItems: number}}>(
+        `${this.apiUrl}/my-orders?page=${page}&limit=${limit}`,
+      )
+      .pipe(map(res => res.data))
   }
 
   getAllOrders(page: number = 1, limit: number = 12) {
-    return this.httpClient.get<{data: Order[]}>(`${this.apiUrl}?page=${page}&limit=${limit}`)
+    return this.httpClient
+      .get<{data: {orders: Order[], totalItems: number}}>(
+        `${this.apiUrl}?page=${page}&limit=${limit}`,
+      )
+      .pipe(map(res => res.data))
   }
 
   getCount() {

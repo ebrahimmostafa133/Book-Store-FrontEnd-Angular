@@ -6,10 +6,11 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {NgxPaginationModule} from 'ngx-pagination'
 import {ToastrService} from 'ngx-toastr'
 import {AuthorsService} from '../../../core/services/authors.service'
+import {ConfirmationModal} from '../../../shared/components/confirmation-modal/confirmation-modal.component'
 
 @Component({
   selector: 'app-manage-authors',
-  imports: [ReactiveFormsModule, NgxPaginationModule],
+  imports: [ReactiveFormsModule, NgxPaginationModule, ConfirmationModal],
   templateUrl: './manage-authors.html',
   styleUrl: './manage-authors.css',
 })
@@ -27,6 +28,9 @@ export class ManageAuthors implements OnInit {
   currentPage = signal(1)
   totalItems = signal(0)
   itemsPerPage = 10
+
+  isConfirmModalOpen = signal(false)
+  authorToDeleteId: string | null = null
 
   displayAuthors = computed(() => {
     const total = this.totalItems()
@@ -142,21 +146,33 @@ export class ManageAuthors implements OnInit {
   }
 
   deleteAuthor(id: string) {
-    // eslint-disable-next-line no-alert
-    if (window.confirm('Are you sure you want to delete this author?')) {
-      this.authorsService.deleteAuthor(id).subscribe({
-        next: () => {
-          this.toastr.success('Author deleted successfully')
-          this.authors.update(authors => authors.filter(a => a.id !== id))
-          this.totalItems.update(count => count - 1)
-          this.cdr.detectChanges()
-        },
-        error: (_err) => {
-          this.toastr.error('Error deleting author')
-          this.cdr.detectChanges()
-        },
-      })
+    this.authorToDeleteId = id
+    this.isConfirmModalOpen.set(true)
+  }
+
+  confirmDelete() {
+    if (!this.authorToDeleteId) {
+      return
     }
+
+    this.authorsService.deleteAuthor(this.authorToDeleteId).subscribe({
+      next: () => {
+        this.toastr.success('Author deleted successfully')
+        this.authors.update(authors => authors.filter(a => a.id !== this.authorToDeleteId))
+        this.totalItems.update(count => count - 1)
+        this.cancelDelete()
+        this.cdr.detectChanges()
+      },
+      error: (_err) => {
+        this.toastr.error('Error deleting author')
+        this.cdr.detectChanges()
+      },
+    })
+  }
+
+  cancelDelete() {
+    this.isConfirmModalOpen.set(false)
+    this.authorToDeleteId = null
   }
 
   onPageChange(page: number) {
