@@ -18,7 +18,7 @@ export class Authors implements OnInit {
   private readonly platformId = inject(PLATFORM_ID)
   authors = signal<Author[]>([])
   currentPage = signal(1)
-  itemsPerPage = 2
+  itemsPerPage = 12
   totalPages = signal(1)
   totalItems = signal(0)
   isLoading = signal(true)

@@ -20,37 +20,39 @@
         </tr>
       </thead>
       <tbody>
-        @for (book of books; track book.id || $index) {
-          <tr class="bg-white border-b hover:bg-gray-50">
-            <td class="px-6 py-4">
-              @if (book.bookCover) {
-                <img [src]="book.bookCover" alt="{{ book.name }}" class="w-16 h-24 object-cover rounded">
-              } @else {
-                <div class="w-16 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500">
-                  No Cover
-                </div>
-              }
-            </td>
-            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-              {{ book.name }}
-            </td>
-            <td class="px-6 py-4">
-              {{ book.author.name }}
-            </td>
-            <td class="px-6 py-4">
-              {{ book.category.name }}
-            </td>
-            <td class="px-6 py-4">
-              ${{ book.price }}
-            </td>
-            <td class="px-6 py-4">
-              {{ book.stock }}
-            </td>
-            <td class="px-6 py-4 flex gap-4">
-              <button (click)="openModal(book)" class="font-medium text-blue-600 hover:underline">Edit</button>
-              <button (click)="deleteBook(book.id)" class="font-medium text-red-600 hover:underline">Delete</button>
-            </td>
-          </tr>
+        @for (book of displayBooks() | paginate: { id: 'adminBooks', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track book?.id || $index) {
+          @if (book) {
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td class="px-6 py-4">
+                @if (book.bookCover) {
+                  <img [src]="book.bookCover" alt="{{ book.name }}" class="w-16 h-24 object-cover rounded">
+                } @else {
+                  <div class="w-16 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                    No Cover
+                  </div>
+                }
+              </td>
+              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                {{ book?.name }}
+              </td>
+              <td class="px-6 py-4">
+                {{ book?.author?.name }}
+              </td>
+              <td class="px-6 py-4">
+                {{ book?.category?.name }}
+              </td>
+              <td class="px-6 py-4">
+                ${{ book?.price }}
+              </td>
+              <td class="px-6 py-4">
+                {{ book?.stock }}
+              </td>
+              <td class="px-6 py-4 flex gap-4">
+                <button (click)="openModal(book!)" class="font-medium text-blue-600 hover:underline">Edit</button>
+                <button (click)="deleteBook(book!.id)" class="font-medium text-red-600 hover:underline">Delete</button>
+              </td>
+            </tr>
+          }
         } @empty {
           <tr>
             <td colspan="7" class="px-6 py-4 text-center text-gray-500">
@@ -60,6 +62,9 @@
         }
       </tbody>
     </table>
+  </div>
+  <div class="flex justify-center mt-4">
+    <pagination-controls id="adminBooks" (pageChange)="onPageChange($event)" class="mt-4 items-center justify-center flex"></pagination-controls>
   </div>
 </section>
 
@@ -89,9 +94,9 @@
           </div>
           <div>
             <label for="author" class="block mb-2 text-sm font-medium text-gray-900">Author</label>
-            <select id="author" formControlName="author" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-              <option value="">Select Author</option>
-              @for (author of authors; track author.id) {
+            <select id="author" formControlName="author" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+              <option value="" disabled selected>Select author</option>
+              @for (author of authors(); track author.id) {
                 <option [value]="author.id">{{ author.name }}</option>
               }
             </select>
@@ -101,9 +106,9 @@
           </div>
           <div>
             <label for="category" class="block mb-2 text-sm font-medium text-gray-900">Category</label>
-            <select id="category" formControlName="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-              <option value="">Select Category</option>
-              @for (category of categories; track category.id) {
+            <select id="category" formControlName="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+              <option value="" disabled selected>Select category</option>
+              @for (category of categories(); track category.id) {
                 <option [value]="category.id">{{ category.name }}</option>
               }
             </select>

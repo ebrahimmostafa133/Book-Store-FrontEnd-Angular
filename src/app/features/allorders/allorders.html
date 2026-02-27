@@ -6,7 +6,7 @@
       <p class="mt-2 text-lg text-gray-500 dark:text-gray-400">Track and manage your recent purchases.</p>
     </div>
 
-    @if (orders().length > 0) {
+    @if (totalItems() > 0) {
       <div class="relative overflow-x-auto shadow-sm border border-gray-200 dark:border-gray-700 rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -20,38 +20,44 @@
             </tr>
           </thead>
           <tbody>
-            @for (order of orders(); track order.id) {
-              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200">
-                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                  #{{ order.id.slice(-8).toUpperCase() }}
-                </td>
-                <td class="px-6 py-4 text-right whitespace-nowrap">
-                  <button (click)="openReceipt(order)" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium">
-                    View Receipt
-                  </button>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  {{ order.createdAt | date:'mediumDate' }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span [class]="getStatusClass(order.status)">
-                    {{ order.status }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 font-bold text-gray-900 dark:text-white whitespace-nowrap">
-                  {{ order.totalAmount | currency }}
-                </td>
-                <td class="px-6 py-4 text-right whitespace-nowrap">
-                  {{ order.items.length }} items
-                </td>
-              </tr>
+            @for (order of orders() | paginate: { id: 'ordersControl', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track order?.id || $index) {
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200">
+                  <td class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                    #{{ order.id.slice(-8).toUpperCase() }}
+                  </td>
+                  <td class="px-6 py-4 text-right whitespace-nowrap">
+                    <button (click)="openReceipt(order)" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium">
+                      View Receipt
+                    </button>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ order.createdAt | date:'mediumDate' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span [class]="getStatusClass(order.status)">
+                      {{ order.status }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 font-bold text-gray-900 dark:text-white whitespace-nowrap">
+                    {{ order.totalAmount | currency }}
+                  </td>
+                  <td class="px-6 py-4 text-right whitespace-nowrap">
+                    {{ order.items.length }} items
+                  </td>
+                </tr>
             }
           </tbody>
         </table>
       </div>
+
+      @if (totalItems() > itemsPerPage) {
+        <div class="mt-8 flex justify-center">
+          <pagination-controls id="ordersControl" (pageChange)="onPageChange($event)" class="my-pagination"></pagination-controls>
+        </div>
+      }
     }
 
-    @if (!isLoading() && orders().length === 0) {
+    @if (!isLoading() && totalItems() === 0) {
       <div class="text-center py-20 border border-gray-200 rounded-lg dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
         <div class="text-6xl mb-4 text-gray-300 dark:text-gray-600">
           <i class="fa-solid fa-box-open"></i>

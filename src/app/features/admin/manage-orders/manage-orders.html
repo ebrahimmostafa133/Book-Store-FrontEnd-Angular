@@ -19,32 +19,35 @@
           </tr>
         </thead>
         <tbody>
-          @for (order of orders; track order.id) {
-            <tr class="bg-white border-b hover:bg-gray-50">
-              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                {{ order.id }}
-              </td>
-              <td class="px-6 py-4 text-xs font-mono">
-                {{ order.user }}
-              </td>
-              <td class="px-6 py-4">
-                {{ order.totalAmount | currency }}
-              </td>
-              <td class="px-6 py-4">
-                {{ order.createdAt | date:'mediumDate' }}
-              </td>
-              <td class="px-6 py-4">
-                <select [value]="order.status" (change)="updateStatus(order.id, $event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                  @for (status of statusOptions; track status) {
-                    <option [value]="status">{{ status | titlecase }}</option>
-                  }
-                </select>
-              </td>
-              <td class="px-6 py-4">
-                <button (click)="deleteOrder(order.id)" class="font-medium text-red-600 hover:underline">Delete</button>
-              </td>
-            </tr>
-          } @empty {
+          @for (order of displayOrders() | paginate: { id: 'adminOrders', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track order?.id || $index) {
+            @if (order) {
+              <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                  {{ order?.id }}
+                </td>
+                <td class="px-6 py-4 text-xs font-mono">
+                  {{ order?.user }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ order?.totalAmount | currency }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ order?.createdAt | date:'mediumDate' }}
+                </td>
+                <td class="px-6 py-4">
+                  <select [value]="order?.status" (change)="updateStatus(order!.id, $event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    @for (status of statusOptions; track status) {
+                      <option [value]="status">{{ status | titlecase }}</option>
+                    }
+                  </select>
+                </td>
+                <td class="px-6 py-4">
+                  <button (click)="deleteOrder(order!.id)" class="font-medium text-red-600 hover:underline">Delete</button>
+                </td>
+              </tr>
+            }
+          }
+ @empty {
             <tr>
               <td colspan="6" class="px-6 py-4 text-center text-gray-500">
                 No orders found.
@@ -53,6 +56,9 @@
           }
         </tbody>
       </table>
+      <div class="flex justify-center mt-4 pb-4 px-4">
+        <pagination-controls id="adminOrders" (pageChange)="onPageChange($event)" class="mt-4 items-center justify-center flex"></pagination-controls>
+      </div>
     }
   </div>
 </section>

@@ -18,6 +18,10 @@ export class BooksService {
     return this.httpClient.get<{data: Book[]}>(url)
   }
 
+  getCount() {
+    return this.httpClient.get<{data: number}>(`${this.apiUrl}/count`)
+  }
+
   getBookById(id: string) {
     return this.httpClient.get<{data: Book}>(`${this.apiUrl}/${id}`)
   }

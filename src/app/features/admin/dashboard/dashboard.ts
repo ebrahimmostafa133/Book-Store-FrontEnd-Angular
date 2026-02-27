@@ -35,17 +35,17 @@ export class Dashboard implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.isLoading = true
       forkJoin({
-        books: this.booksService.getAllBooks().pipe(catchError(() => of({data: []}))),
-        authors: this.authorsService.getAllAuthors().pipe(catchError(() => of({data: []}))),
-        categories: this.categoriesService.getAllCategories().pipe(catchError(() => of({data: []}))),
-        orders: this.ordersService.getAllOrders().pipe(catchError(() => of({data: []}))),
+        books: this.booksService.getCount().pipe(catchError(() => of({data: 0}))),
+        authors: this.authorsService.getCount().pipe(catchError(() => of({data: 0}))),
+        categories: this.categoriesService.getCount().pipe(catchError(() => of({data: 0}))),
+        orders: this.ordersService.getCount().pipe(catchError(() => of({data: 0}))),
       }).subscribe({
         next: (res: any) => {
           console.log('Dashboard stats loaded:', res)
-          this.stats.books = res.books?.data?.length || res.books?.length || 0
-          this.stats.authors = res.authors?.data?.length || res.authors?.length || 0
-          this.stats.categories = res.categories?.data?.length || res.categories?.length || 0
-          this.stats.orders = res.orders?.data?.length || res.orders?.length || 0
+          this.stats.books = res.books?.data || 0
+          this.stats.authors = res.authors?.data || 0
+          this.stats.categories = res.categories?.data || 0
+          this.stats.orders = res.orders?.data || 0
           this.isLoading = false
           this.cdr.detectChanges()
         },

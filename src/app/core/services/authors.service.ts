@@ -14,6 +14,10 @@ export class AuthorsService {
     return this.httpClient.get<{data: Author[]}>(`${this.apiUrl}?page=${page}&limit=${limit}`)
   }
 
+  getCount() {
+    return this.httpClient.get<{data: number}>(`${this.apiUrl}/count`)
+  }
+
   getAuthorById(id: string) {
     return this.httpClient.get<{data: Author}>(`${this.apiUrl}/${id}`)
   }
