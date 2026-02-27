@@ -1,5 +1,4 @@
 import type {OnInit} from '@angular/core'
-import type {Cart as CartInterface} from '../../core/interfaces/cart.interface'
 import {CommonModule, isPlatformBrowser} from '@angular/common'
 import {Component, computed, inject, PLATFORM_ID} from '@angular/core'
 import {Router, RouterModule} from '@angular/router'

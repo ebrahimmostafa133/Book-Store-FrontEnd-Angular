@@ -28,6 +28,7 @@ export const routes: Routes = [
     children: [
       {path: 'cart', loadComponent: () => import('./features/cart/cart').then(m => m.Cart)},
       {path: 'checkout', loadComponent: () => import('./features/checkout/checkout').then(m => m.Checkout)},
+      {path: 'payment', loadComponent: () => import('./features/payment/payment').then(m => m.Payment)},
       {path: 'allorders', loadComponent: () => import('./features/allorders/allorders').then(m => m.Allorders)},
       {path: 'profile', loadComponent: () => import('./features/profile/profile').then(m => m.Profile)},
       {path: 'wishlist', loadComponent: () => import('./features/wishlist/wishlist').then(m => m.Wishlist)},
