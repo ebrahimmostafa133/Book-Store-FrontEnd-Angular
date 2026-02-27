@@ -1,14 +1,15 @@
 import type {OnInit} from '@angular/core'
 import type {FormGroup} from '@angular/forms'
 import type {Author} from '../../../core/interfaces/author.interface'
-import {ChangeDetectorRef, Component, inject} from '@angular/core'
+import {ChangeDetectorRef, Component, computed, inject, signal} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
+import {NgxPaginationModule} from 'ngx-pagination'
 import {ToastrService} from 'ngx-toastr'
 import {AuthorsService} from '../../../core/services/authors.service'
 
 @Component({
   selector: 'app-manage-authors',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgxPaginationModule],
   templateUrl: './manage-authors.html',
   styleUrl: './manage-authors.css',
 })
@@ -18,11 +19,31 @@ export class ManageAuthors implements OnInit {
   private toastr = inject(ToastrService)
   private cdr = inject(ChangeDetectorRef)
 
-  authors: Author[] = []
+  authors = signal<Author[]>([])
   authorForm: FormGroup
   isModalOpen = false
   editingAuthorId: string | null = null
   isLoading = false
+  currentPage = signal(1)
+  totalItems = signal(0)
+  itemsPerPage = 10
+
+  displayAuthors = computed(() => {
+    const total = this.totalItems()
+    const current = this.authors()
+    const page = this.currentPage()
+    const size = this.itemsPerPage
+
+    const arr = Array.from<Author | null>({length: total}).fill(null)
+    const start = (page - 1) * size
+
+    for (let i = 0; i < current.length; i++) {
+      if (start + i < total) {
+        arr[start + i] = current[i]
+      }
+    }
+    return arr
+  })
 
   constructor() {
     this.authorForm = this.fb.group({
@@ -37,9 +58,9 @@ export class ManageAuthors implements OnInit {
 
   loadAuthors() {
     this.isLoading = true
-    this.authorsService.getAllAuthors().subscribe({
-      next: (res) => {
-        this.authors = res.data
+    this.authorsService.getAllAuthors(this.currentPage(), this.itemsPerPage).subscribe({
+      next: (res: any) => {
+        this.authors.set(res.data)
         this.isLoading = false
         this.cdr.detectChanges()
       },
@@ -47,6 +68,16 @@ export class ManageAuthors implements OnInit {
         this.toastr.error('Error loading authors')
         this.isLoading = false
         this.cdr.detectChanges()
+      },
+    })
+
+    this.authorsService.getCount().subscribe({
+      next: (res: any) => {
+        this.totalItems.set(res.data)
+        this.cdr.detectChanges()
+      },
+      error: (_err) => {
+        console.error('Error loading authors count')
       },
     })
   }
@@ -116,7 +147,8 @@ export class ManageAuthors implements OnInit {
       this.authorsService.deleteAuthor(id).subscribe({
         next: () => {
           this.toastr.success('Author deleted successfully')
-          this.loadAuthors()
+          this.authors.update(authors => authors.filter(a => a.id !== id))
+          this.totalItems.update(count => count - 1)
           this.cdr.detectChanges()
         },
         error: (_err) => {
@@ -125,5 +157,10 @@ export class ManageAuthors implements OnInit {
         },
       })
     }
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page)
+    this.loadAuthors()
   }
 }

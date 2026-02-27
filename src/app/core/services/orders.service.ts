@@ -17,12 +17,16 @@ export class OrdersService {
     })
   }
 
-  getMyOrders() {
-    return this.httpClient.get<{data: Order[]}>(`${this.apiUrl}/my-orders`)
+  getMyOrders(page: number = 1, limit: number = 12) {
+    return this.httpClient.get<{data: Order[], totalItems: number}>(`${this.apiUrl}/my-orders?page=${page}&limit=${limit}`)
   }
 
-  getAllOrders() {
-    return this.httpClient.get<{data: Order[]}>(this.apiUrl)
+  getAllOrders(page: number = 1, limit: number = 12) {
+    return this.httpClient.get<{data: Order[]}>(`${this.apiUrl}?page=${page}&limit=${limit}`)
+  }
+
+  getCount() {
+    return this.httpClient.get<{data: number}>(`${this.apiUrl}/count`)
   }
 
   // TODO: remove. unused, and doesn't match new API

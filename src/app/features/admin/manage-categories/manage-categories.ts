@@ -1,14 +1,15 @@
 import type {OnInit} from '@angular/core'
 import type {FormGroup} from '@angular/forms'
 import type {Category} from '../../../core/interfaces/category.interface'
-import {ChangeDetectorRef, Component, inject} from '@angular/core'
+import {ChangeDetectorRef, Component, computed, inject, signal} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
+import {NgxPaginationModule} from 'ngx-pagination'
 import {ToastrService} from 'ngx-toastr'
 import {CategoriesService} from '../../../core/services/categories.service'
 
 @Component({
   selector: 'app-manage-categories',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgxPaginationModule],
   templateUrl: './manage-categories.html',
   styleUrl: './manage-categories.css',
 })
@@ -18,11 +19,31 @@ export class ManageCategories implements OnInit {
   private toastr = inject(ToastrService)
   private cdr = inject(ChangeDetectorRef)
 
-  categories: Category[] = []
+  categories = signal<Category[]>([])
   categoryForm: FormGroup
   isModalOpen = false
   editingCategoryId: string | null = null
   isLoading = false
+  currentPage = signal(1)
+  totalItems = signal(0)
+  itemsPerPage = 2
+
+  displayCategories = computed(() => {
+    const total = this.totalItems()
+    const current = this.categories()
+    const page = this.currentPage()
+    const size = this.itemsPerPage
+
+    const arr = Array.from<Category | null>({length: total}).fill(null)
+    const start = (page - 1) * size
+
+    for (let i = 0; i < current.length; i++) {
+      if (start + i < total) {
+        arr[start + i] = current[i]
+      }
+    }
+    return arr
+  })
 
   constructor() {
     this.categoryForm = this.fb.group({
@@ -37,9 +58,9 @@ export class ManageCategories implements OnInit {
 
   loadCategories() {
     this.isLoading = true
-    this.categoriesService.getAllCategories().subscribe({
-      next: (res) => {
-        this.categories = res.data
+    this.categoriesService.getAllCategories(this.currentPage(), this.itemsPerPage).subscribe({
+      next: (res: any) => {
+        this.categories.set(res.data)
         this.isLoading = false
         this.cdr.detectChanges()
       },
@@ -47,6 +68,16 @@ export class ManageCategories implements OnInit {
         this.toastr.error('Error loading categories')
         this.isLoading = false
         this.cdr.detectChanges()
+      },
+    })
+
+    this.categoriesService.getCount().subscribe({
+      next: (res: any) => {
+        this.totalItems.set(res.data)
+        this.cdr.detectChanges()
+      },
+      error: (_err) => {
+        console.error('Error loading categories count')
       },
     })
   }
@@ -116,7 +147,8 @@ export class ManageCategories implements OnInit {
       this.categoriesService.deleteCategory(id).subscribe({
         next: () => {
           this.toastr.success('Category deleted successfully')
-          this.loadCategories()
+          this.categories.update(cats => cats.filter(c => c.id !== id))
+          this.totalItems.update(count => count - 1)
           this.cdr.detectChanges()
         },
         error: (_err) => {
@@ -125,5 +157,10 @@ export class ManageCategories implements OnInit {
         },
       })
     }
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page)
+    this.loadCategories()
   }
 }

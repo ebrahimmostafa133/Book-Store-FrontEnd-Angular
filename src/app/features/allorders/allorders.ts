@@ -2,11 +2,12 @@ import type {OnInit} from '@angular/core'
 import type {Order} from '../../core/interfaces/order.interface'
 import {CurrencyPipe, DatePipe} from '@angular/common'
 import {Component, inject, signal} from '@angular/core'
+import {NgxPaginationModule} from 'ngx-pagination'
 import {OrdersService} from '../../core/services/orders.service'
 
 @Component({
   selector: 'app-allorders',
-  imports: [CurrencyPipe, DatePipe],
+  imports: [CurrencyPipe, DatePipe, NgxPaginationModule],
   templateUrl: './allorders.html',
   styleUrl: './allorders.css',
 })
@@ -16,17 +17,20 @@ export class Allorders implements OnInit {
   orders = signal<Order[]>([])
   selectedOrder = signal<Order | null>(null)
   isLoading = signal(true)
+  currentPage = signal(1)
+  totalItems = signal(0)
+  itemsPerPage = 10
 
   ngOnInit(): void {
-    this.ordersService.getMyOrders().subscribe({
+    this.loadOrders()
+  }
+
+  loadOrders(): void {
+    this.isLoading.set(true)
+    this.ordersService.getMyOrders(this.currentPage(), this.itemsPerPage).subscribe({
       next: (res) => {
-        // Sort orders by date (newest first)
-        const sortedOrders = res.data.sort((a, b) => {
-          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
-          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
-          return dateB - dateA
-        })
-        this.orders.set(sortedOrders)
+        this.orders.set(res.data)
+        this.totalItems.set(res.totalItems)
         this.isLoading.set(false)
       },
       error: (err) => {
@@ -34,6 +38,12 @@ export class Allorders implements OnInit {
         this.isLoading.set(false)
       },
     })
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page)
+    this.loadOrders()
+    window.scrollTo({top: 0, behavior: 'smooth'})
   }
 
   getStatusClass(status: string): string {

@@ -19,7 +19,7 @@ export class Categories implements OnInit {
 
   categories = signal<Category[]>([])
   currentPage = signal(1)
-  itemsPerPage = 2
+  itemsPerPage = 12
   totalPages = signal(1)
   totalItems = signal(0)
   isLoading = signal(true)

@@ -16,19 +16,21 @@
         </tr>
       </thead>
       <tbody>
-        @for (author of authors; track author.id) {
-          <tr class="bg-white border-b hover:bg-gray-50">
-            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-              {{ author.name }}
-            </td>
-            <td class="px-6 py-4">
-              {{ author.bio }}
-            </td>
-            <td class="px-6 py-4 flex gap-4">
-              <button (click)="openModal(author)" class="font-medium text-blue-600 hover:underline">Edit</button>
-              <button (click)="deleteAuthor(author.id)" class="font-medium text-red-600 hover:underline">Delete</button>
-            </td>
-          </tr>
+        @for (author of displayAuthors() | paginate: { id: 'adminAuthors', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track author?.id || $index) {
+          @if (author) {
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                {{ author?.name }}
+              </td>
+              <td class="px-6 py-4">
+                {{ author?.bio }}
+              </td>
+              <td class="px-6 py-4 flex gap-4">
+                <button (click)="openModal(author!)" class="font-medium text-blue-600 hover:underline">Edit</button>
+                <button (click)="deleteAuthor(author!.id)" class="font-medium text-red-600 hover:underline">Delete</button>
+              </td>
+            </tr>
+          }
         } @empty {
           <tr>
             <td colspan="3" class="px-6 py-4 text-center text-gray-500">
@@ -38,6 +40,9 @@
         }
       </tbody>
     </table>
+  </div>
+  <div class="flex justify-center mt-4">
+    <pagination-controls id="adminAuthors" (pageChange)="onPageChange($event)" class="mt-4 items-center justify-center flex"></pagination-controls>
   </div>
 </section>
 

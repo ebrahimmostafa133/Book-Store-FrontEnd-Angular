@@ -14,6 +14,10 @@ export class CategoriesService {
     return this.httpClient.get<{data: Category[]}>(`${this.apiUrl}?page=${page}&limit=${limit}`)
   }
 
+  getCount() {
+    return this.httpClient.get<{data: number}>(`${this.apiUrl}/count`)
+  }
+
   getCategoryById(id: string) {
     return this.httpClient.get<{data: Category}>(`${this.apiUrl}/${id}`)
   }

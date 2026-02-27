@@ -3,8 +3,9 @@ import type {FormGroup} from '@angular/forms'
 import type {Author} from '../../../core/interfaces/author.interface'
 import type {Book} from '../../../core/interfaces/book.interface'
 import type {Category} from '../../../core/interfaces/category.interface'
-import {ChangeDetectorRef, Component, inject} from '@angular/core'
+import {ChangeDetectorRef, Component, computed, inject, signal} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
+import {NgxPaginationModule} from 'ngx-pagination'
 import {ToastrService} from 'ngx-toastr'
 import {AuthorsService} from '../../../core/services/authors.service'
 import {BooksService} from '../../../core/services/books.service'
@@ -12,7 +13,7 @@ import {CategoriesService} from '../../../core/services/categories.service'
 
 @Component({
   selector: 'app-manage-books',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgxPaginationModule],
   templateUrl: './manage-books.html',
   styleUrl: './manage-books.css',
 })
@@ -24,9 +25,29 @@ export class ManageBooks implements OnInit {
   private toastr = inject(ToastrService)
   private cdr = inject(ChangeDetectorRef)
 
-  books: Book[] = []
-  authors: Author[] = []
-  categories: Category[] = []
+  books = signal<Book[]>([])
+  authors = signal<Author[]>([])
+  categories = signal<Category[]>([])
+  currentPage = signal(1)
+  totalItems = signal(0)
+  itemsPerPage = 10
+
+  displayBooks = computed(() => {
+    const total = this.totalItems()
+    const current = this.books()
+    const page = this.currentPage()
+    const size = this.itemsPerPage
+
+    const arr = Array.from<Book | null>({length: total}).fill(null)
+    const start = (page - 1) * size
+
+    for (let i = 0; i < current.length; i++) {
+      if (start + i < total) {
+        arr[start + i] = current[i]
+      }
+    }
+    return arr
+  })
 
   bookForm: FormGroup
   isModalOpen = false
@@ -54,9 +75,9 @@ export class ManageBooks implements OnInit {
   loadData() {
     this.isLoading = true
 
-    this.booksService.getAllBooks().subscribe({
+    this.booksService.getAllBooks(this.currentPage(), this.itemsPerPage).subscribe({
       next: (res: any) => {
-        this.books = res.data || res
+        this.books.set(res.data || res)
         this.isLoading = false
         this.cdr.detectChanges()
       },
@@ -67,17 +88,27 @@ export class ManageBooks implements OnInit {
       },
     })
 
+    this.booksService.getCount().subscribe({
+      next: (res: any) => {
+        this.totalItems.set(res.data)
+        this.cdr.detectChanges()
+      },
+      error: (_err) => {
+        console.error('Error loading books count')
+      },
+    })
+
     this.authorsService.getAllAuthors().subscribe({
-      next: (res) => {
-        this.authors = res.data
+      next: (res: any) => {
+        this.authors.set(res.data || res)
         this.cdr.detectChanges()
       },
       error: (_err) => { this.toastr.error('Error loading authors') },
     })
 
     this.categoriesService.getAllCategories().subscribe({
-      next: (res) => {
-        this.categories = res.data
+      next: (res: any) => {
+        this.categories.set(res.data || res)
         this.cdr.detectChanges()
       },
       error: (_err) => { this.toastr.error('Error loading categories') },
@@ -186,12 +217,19 @@ export class ManageBooks implements OnInit {
       this.booksService.deleteBook(id).subscribe({
         next: () => {
           this.toastr.success('Book deleted successfully')
-          this.loadData()
+          this.books.update(books => books.filter(b => b.id !== id))
+          this.totalItems.update(count => count - 1)
+          this.cdr.detectChanges()
         },
         error: (_err) => {
           this.toastr.error('Error deleting book')
         },
       })
     }
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page)
+    this.loadData()
   }
 }

@@ -18,7 +18,7 @@ export class Books implements OnInit {
 
   books = signal<Book[]>([])
   currentPage = signal(1)
-  itemsPerPage = 3
+  itemsPerPage = 12
   isLoading = signal(true)
 
   totalPages = signal(1)
