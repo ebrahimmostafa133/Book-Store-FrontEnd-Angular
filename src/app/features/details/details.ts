@@ -170,14 +170,16 @@ export class Details implements OnInit {
   }
 
   addToCart(bookId: string): void {
-    this.cartService.upsertToCart(bookId, 1).subscribe({
-      next: () => {
-        this.toastr.success('Book added to cart successfully!')
-      },
-      error: (err: any) => {
-        console.error('Error adding book to cart', err)
-        this.toastr.error('Failed to add book to cart.')
-      },
-    })
+    this.cartService.addToCart(bookId, 1)
+    // TODO: delete if we are ok with it:
+    // this.cartService.addToCart(bookId, 1).subscribe({
+    //   next: () => {
+    //     this.toastr.success('Book added to cart successfully!')
+    //   },
+    //   error: (err: any) => {
+    //     console.error('Error adding book to cart', err)
+    //     this.toastr.error('Failed to add book to cart.')
+    //   },
+    // })
   }
 }

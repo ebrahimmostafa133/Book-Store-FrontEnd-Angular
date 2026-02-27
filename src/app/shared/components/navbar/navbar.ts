@@ -1,6 +1,7 @@
 import {Component, inject} from '@angular/core'
 import {Router, RouterLink, RouterLinkActive} from '@angular/router'
 import {AuthService} from '../../../core/services/auth.service'
+import {CartService} from '../../../core/services/cart.service'
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +12,9 @@ import {AuthService} from '../../../core/services/auth.service'
 })
 export class Navbar {
   authService = inject(AuthService)
+  cartService = inject(CartService)
   private router = inject(Router)
+  cartCount = this.cartService.cartCount
 
   isMenuOpen = false
   isDropdownOpen = false

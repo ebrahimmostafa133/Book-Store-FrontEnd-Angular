@@ -9,8 +9,13 @@
       @if (isLoggedIn()) {
         
         @if (isUser()) {
-          <a routerLink="/cart" class="text-gray-600 hover:text-blue-700 relative">
+          <a routerLink="/cart" class="text-gray-600 hover:text-blue-700 relative inline-flex items-center p-2">
             <i class="fa-solid fa-cart-shopping text-xl"></i>
+            @if (cartCount() > 0) {
+              <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                {{ cartCount() }}
+              </span>
+            }
           </a>
         }
         @if (isUser()) {
