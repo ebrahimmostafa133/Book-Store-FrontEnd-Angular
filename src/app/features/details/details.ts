@@ -3,7 +3,7 @@ import type {Book} from '../../core/interfaces/book.interface'
 import type {Review} from '../../core/interfaces/review.interface'
 
 import {CurrencyPipe, DatePipe} from '@angular/common'
-import {Component, inject, signal} from '@angular/core'
+import {Component, computed, inject, signal} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {ActivatedRoute} from '@angular/router'
 import {ToastrService} from 'ngx-toastr'
@@ -31,6 +31,12 @@ export class Details implements OnInit {
 
   book = signal<Book | null>(null)
   isLoading = signal(true)
+
+  isInCart = computed(() => {
+    const bookId = this.book()?.id
+    const items = this.cartService.cart()?.items || []
+    return items.some(item => item.book.id === bookId)
+  })
 
   reviews = signal<Review[]>([])
   isEditing = signal(false)
@@ -65,6 +71,10 @@ export class Details implements OnInit {
       })
     } else {
       this.isLoading.set(false)
+    }
+
+    if (this.authService.isLoggedIn()) {
+      this.cartService.getCart().subscribe()
     }
   }
 
@@ -176,15 +186,5 @@ export class Details implements OnInit {
       return
     }
     this.cartService.addToCart(bookId, 1)
-    // TODO: delete if we are ok with it:
-    // this.cartService.addToCart(bookId, 1).subscribe({
-    //   next: () => {
-    //     this.toastr.success('Book added to cart successfully!')
-    //   },
-    //   error: (err: any) => {
-    //     console.error('Error adding book to cart', err)
-    //     this.toastr.error('Failed to add book to cart.')
-    //   },
-    // })
   }
 }

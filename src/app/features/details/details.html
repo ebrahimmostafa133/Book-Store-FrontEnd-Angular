@@ -67,11 +67,11 @@
             <button 
               type="button" 
               (click)="addToCart(currentBook.id)" 
-              [disabled]="currentBook.stock === 0"
+              [disabled]="currentBook.stock === 0 || isInCart()"
               class="w-[280px] btn-gold py-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-gold/10"
             >
-              <i class="fa-solid fa-cart-shopping"></i>
-              {{ currentBook.stock === 0 ? 'Out of Stock' : 'Add to cart' }}
+              <i class="fa-solid" [class.fa-cart-shopping]="!isInCart()" [class.fa-check]="isInCart()"></i>
+              {{ currentBook.stock === 0 ? 'Out of Stock' : (isInCart() ? 'Already in Cart' : 'Add to cart') }}
             </button>
           </div>
 
