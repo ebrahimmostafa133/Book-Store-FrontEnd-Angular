@@ -23,6 +23,10 @@ export class Navbar {
     if (typeof localStorage !== 'undefined' && localStorage.getItem('theme') === 'light') {
       document.documentElement.classList.add('light')
     }
+
+    if (this.authService.isLoggedIn()) {
+      this.cartService.getCart().subscribe()
+    }
   }
 
   public toggleTheme(): void {
