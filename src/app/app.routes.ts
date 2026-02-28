@@ -57,6 +57,7 @@ export const routes: Routes = [
     children: [
       {path: 'login', loadComponent: () => import('./core/auth/login/login').then(m => m.Login)},
       {path: 'register', loadComponent: () => import('./core/auth/register/register').then(m => m.Register)},
+      {path: 'forget-password', loadComponent: () => import('./core/auth/forgot-password/forgot-password').then(m => m.ForgotPassword)},
     ],
   },
   {path: 'not-found', loadComponent: () => import('./features/notfound/notfound').then(m => m.Notfound)},
