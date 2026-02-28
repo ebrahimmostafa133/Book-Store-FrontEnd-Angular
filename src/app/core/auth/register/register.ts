@@ -2,12 +2,13 @@ import type {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/form
 import {CommonModule} from '@angular/common'
 import {Component, inject} from '@angular/core'
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms'
+import {RouterLink} from '@angular/router'
 import {AuthService} from '../../services/auth.service'
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
 })
 export class Register {

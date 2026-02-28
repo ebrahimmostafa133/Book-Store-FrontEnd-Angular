@@ -23,7 +23,7 @@
     --input-border: rgba(255,255,255,0.10);
     --shadow: rgba(0,0,0,0.6);
 
-    --primary: #135bec;
+    --primary: #eca713;
     --background-light: #f6f6f8;
     --background-dark: #101622;
   }
@@ -47,6 +47,9 @@
     --input-bg: rgba(0,0,0,0.03);
     --input-border: rgba(0,0,0,0.12);
     --shadow: rgba(0,0,0,0.12);
+
+    --background-light: #ffffff;
+    --background-dark: #f6f6f8;
   }
 
   body {
@@ -55,6 +58,11 @@
   
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* Fix background white logic for light mode */
+  :root.light .bg-white {
+    background-color: #ffffff !important;
   }
 }
 
