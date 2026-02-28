@@ -67,6 +67,27 @@ export class AuthService {
     )
   }
 
+  forgotPassword(email: string) {
+    return this.http.post<{status: string, message: string}>(
+      `${environment.baseUrl}/auth/forgot-password`,
+      {email},
+    )
+  }
+
+  verifyResetCode(resetCode: string) {
+    return this.http.post<{status: string, message: string}>(
+      `${environment.baseUrl}/auth/verify-reset-code`,
+      {resetCode},
+    )
+  }
+
+  updatePassword(resetCode: string, password: string) {
+    return this.http.post<{status: string, message: string}>(
+      `${environment.baseUrl}/auth/update-password`,
+      {resetCode, password},
+    )
+  }
+
   logout() {
     this.cookieService.delete('token', '/')
     this.isLoggedIn.set(false)
