@@ -1,21 +1,34 @@
 
 <section class="bg-white dark:bg-gray-900 ">
 <!-- Hero Carousel Section -->
-<section class="bg-white dark:bg-gray-900 ">
+<section class="bg-white dark:bg-gray-900 relative">
   <owl-carousel-o [options]="mainOption">
     <ng-template carouselSlide>
       <img src="1.png" alt="Library" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
     </ng-template>
     <ng-template carouselSlide>
       <img src="2.png" alt="Books Collection" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
-    </ng-template>  
+    </ng-template>
     <ng-template carouselSlide>
       <img src="3.png" alt="Reading" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
-    </ng-template>  
+    </ng-template>
     <ng-template carouselSlide>
       <img src="library1.webp" alt="Bookstore" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
     </ng-template>
   </owl-carousel-o>
+  
+  <div class="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
+    <div class="pointer-events-auto flex flex-col sm:flex-row gap-4 mt-20">
+      <a routerLink="/books" class="px-8 py-3.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[1.2rem]">menu_book</span>
+        View Books
+      </a>
+      <a routerLink="/categories" class="px-8 py-3.5 bg-white/20 hover:bg-white/30 text-white backdrop-blur-md rounded-xl font-bold transition-colors border border-white/30 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[1.2rem]">category</span>
+        View Categories
+      </a>
+    </div>
+  </div>
 </section>
 
 <!-- Featured Books Section -->
