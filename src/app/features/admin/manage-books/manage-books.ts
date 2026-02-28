@@ -3,6 +3,7 @@ import type {FormGroup} from '@angular/forms'
 import type {Author} from '../../../core/interfaces/author.interface'
 import type {Book} from '../../../core/interfaces/book.interface'
 import type {Category} from '../../../core/interfaces/category.interface'
+import {CommonModule} from '@angular/common'
 import {ChangeDetectorRef, Component, computed, inject, signal} from '@angular/core'
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms'
 import {NgxPaginationModule} from 'ngx-pagination'
@@ -14,7 +15,8 @@ import {ConfirmationModal} from '../../../shared/components/confirmation-modal/c
 
 @Component({
   selector: 'app-manage-books',
-  imports: [ReactiveFormsModule, NgxPaginationModule, ConfirmationModal],
+  standalone: true,
+  imports: [ReactiveFormsModule, NgxPaginationModule, ConfirmationModal, CommonModule],
   templateUrl: './manage-books.html',
   styleUrl: './manage-books.css',
 })

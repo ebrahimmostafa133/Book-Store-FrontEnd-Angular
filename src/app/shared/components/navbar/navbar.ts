@@ -19,6 +19,21 @@ export class Navbar {
   isMenuOpen = false
   isDropdownOpen = false
 
+  ngOnInit(): void {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.add('light')
+    }
+  }
+
+  public toggleTheme(): void {
+    if (typeof document === 'undefined') { return }
+    const root = document.documentElement
+    root.classList.toggle('light')
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark')
+    }
+  }
+
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen
   }

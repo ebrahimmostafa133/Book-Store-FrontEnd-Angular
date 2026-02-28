@@ -1,78 +1,66 @@
-<footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-auto">
-  <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
-    <div class="md:flex md:justify-between">
-      <div class="mb-6 md:mb-0">
-        <a routerLink="/" class="flex items-center">
-          <i class="fa-solid fa-book-open text-3xl text-emerald-600 me-3"></i>
-          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">BookStore</span>
-        </a>
-        <p class="mt-4 text-sm text-gray-500 dark:text-gray-400 max-w-sm">
-          Your one-stop destination for all your reading needs. Discover, read, and enjoy books from various genres.
+<footer class="bg-deep border-t border-line mt-auto text-light font-sans">
+  <div class="max-w-[1280px] mx-auto px-8 pt-12 pb-8">
+    
+    <div class="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-12 pb-10 border-b border-line">
+      
+      <!-- Brand Area -->
+      <div class="flex flex-col gap-4">
+        <div class="font-serif text-[1.4rem] text-white">Book<span class="text-gold">Store</span></div>
+        <p class="text-[0.82rem] text-muted leading-[1.7]">
+          Your one-stop destination for all your reading needs. Discover, explore, and enjoy books from every genre.
         </p>
       </div>
-      <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-        <div>
-          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Shop</h2>
-          <ul class="text-gray-500 dark:text-gray-400 font-medium">
-            <li class="mb-4">
-              <a routerLink="/products" class="hover:underline">Best Sellers</a>
-            </li>
-            <li class="mb-4">
-              <a routerLink="/products" class="hover:underline">New Arrivals</a>
-            </li>
-            <li>
-              <a routerLink="/products" class="hover:underline">All Books</a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
-          <ul class="text-gray-500 dark:text-gray-400 font-medium">
-            <li class="mb-4">
-              <a href="#" class="hover:underline">Facebook</a>
-            </li>
-            <li class="mb-4">
-              <a href="#" class="hover:underline">Twitter</a>
-            </li>
-            <li>
-              <a href="#" class="hover:underline">Instagram</a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
-          <ul class="text-gray-500 dark:text-gray-400 font-medium">
-            <li class="mb-4">
-              <a href="#" class="hover:underline">Privacy Policy</a>
-            </li>
-            <li>
-              <a href="#" class="hover:underline">Terms &amp; Conditions</a>
-            </li>
-          </ul>
-        </div>
+
+      <!-- Footer Column 1 -->
+      <div>
+        <h3 class="text-[0.7rem] tracking-[0.12em] uppercase text-gold font-medium mb-5">Shop</h3>
+        <ul class="flex flex-col gap-[0.7rem] list-none p-0 m-0">
+          <li><a routerLink="/products" class="text-[0.82rem] text-muted no-underline transition-colors hover:text-gold block">Best Sellers</a></li>
+          <li><a routerLink="/products" class="text-[0.82rem] text-muted no-underline transition-colors hover:text-gold block">New Arrivals</a></li>
+          <li><a routerLink="/products" class="text-[0.82rem] text-muted no-underline transition-colors hover:text-gold block">All Books</a></li>
+        </ul>
       </div>
+
+      <!-- Footer Column 2 -->
+      <div>
+        <h3 class="text-[0.7rem] tracking-[0.12em] uppercase text-gold font-medium mb-5">Follow Us</h3>
+        <ul class="flex flex-col gap-[0.7rem] list-none p-0 m-0">
+          <li><a href="#" class="text-[0.82rem] text-muted no-underline transition-colors hover:text-gold block">Facebook</a></li>
+          <li><a href="#" class="text-[0.82rem] text-muted no-underline transition-colors hover:text-gold block">Twitter</a></li>
+          <li><a href="#" class="text-[0.82rem] text-muted no-underline transition-colors hover:text-gold block">Instagram</a></li>
+        </ul>
+      </div>
+
+      <!-- Footer Column 3 -->
+      <div>
+        <h3 class="text-[0.7rem] tracking-[0.12em] uppercase text-gold font-medium mb-5">Legal</h3>
+        <ul class="flex flex-col gap-[0.7rem] list-none p-0 m-0">
+          <li><a href="#" class="text-[0.82rem] text-muted no-underline transition-colors hover:text-gold block">Privacy Policy</a></li>
+          <li><a href="#" class="text-[0.82rem] text-muted no-underline transition-colors hover:text-gold block">Terms & Conditions</a></li>
+        </ul>
+      </div>
+
     </div>
-    <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-    <div class="sm:flex sm:items-center sm:justify-between">
-      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2026 <a routerLink="/" class="hover:underline">BookStore™</a>. All Rights Reserved.</span>
-      <div class="flex mt-4 sm:justify-center sm:mt-0">
-        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-          <i class="fa-brands fa-facebook-f w-4 h-4"></i>
-          <span class="sr-only">Facebook page</span>
+
+    <!-- Bottom Section -->
+    <div class="pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <span class="text-[0.78rem] text-muted">© 2026 BookStore™ · All rights reserved.</span>
+      
+      <div class="flex gap-4">
+        <a href="#" class="w-[34px] h-[34px] border border-line rounded-md grid place-items-center text-muted text-[0.8rem] no-underline transition-all duration-200 hover:border-gold hover:text-gold hover:bg-gold/10">
+          <i class="fa-brands fa-facebook-f"></i>
         </a>
-        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-          <i class="fa-brands fa-twitter w-4 h-4"></i>
-          <span class="sr-only">Twitter page</span>
+        <a href="#" class="w-[34px] h-[34px] border border-line rounded-md grid place-items-center text-muted text-[0.8rem] no-underline transition-all duration-200 hover:border-gold hover:text-gold hover:bg-gold/10">
+          <i class="fa-brands fa-twitter"></i>
         </a>
-        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-          <i class="fa-brands fa-instagram w-4 h-4"></i>
-          <span class="sr-only">Instagram page</span>
+        <a href="#" class="w-[34px] h-[34px] border border-line rounded-md grid place-items-center text-muted text-[0.8rem] no-underline transition-all duration-200 hover:border-gold hover:text-gold hover:bg-gold/10">
+          <i class="fa-brands fa-instagram"></i>
         </a>
-        <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-          <i class="fa-brands fa-github w-4 h-4"></i>
-          <span class="sr-only">GitHub account</span>
+        <a href="#" class="w-[34px] h-[34px] border border-line rounded-md grid place-items-center text-muted text-[0.8rem] no-underline transition-all duration-200 hover:border-gold hover:text-gold hover:bg-gold/10">
+          <i class="fa-brands fa-github"></i>
         </a>
       </div>
     </div>
+
   </div>
 </footer>

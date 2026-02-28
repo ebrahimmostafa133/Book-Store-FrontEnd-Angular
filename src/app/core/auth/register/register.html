@@ -1,89 +1,86 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 text-gray-900">
-  <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
-    <div class="text-center">
-      <h2 class="text-3xl font-bold">Create Account</h2>
-      <p class="mt-2 text-sm text-gray-600">Join our book readers community today</p>
+<div class="auth-scene">
+  <div class="auth-card" style="max-width: 480px;">
+    <div class="auth-header">
+      <div class="auth-ornament">❧</div>
+      <h2 class="font-serif text-[1.6rem] font-normal text-white tracking-[0.02em]">Create Account</h2>
+      <p class="mt-1.5 text-[0.8rem] text-muted tracking-[0.03em]">Join our community of book lovers</p>
     </div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-5">
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">First Name</label>
-          <input type="text" formControlName="firstName" placeholder="Jane"
-            class="mt-1 w-full px-4 py-2 placeholder-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="p-8">
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="form-group mb-0">
+          <label>First Name</label>
+          <input type="text" formControlName="firstName" placeholder="Jane" class="form-input">
         </div>
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Last Name</label>
-          <input type="text" formControlName="lastName" placeholder="Doe"
-            class="mt-1 w-full px-4 py-2 placeholder-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition">
+        <div class="form-group mb-0">
+          <label>Last Name</label>
+          <input type="text" formControlName="lastName" placeholder="Doe" class="form-input">
         </div>
       </div>
 
       @if (registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid) {
-        <p class="text-red-500 text-xs mt-1">First Name is required</p>
+        <p class="text-[#e07070] text-[0.72rem] mt-1.5 mb-2">First Name is required</p>
       }
       @else if (registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid) {
-        <p class="text-red-500 text-xs mt-1">Last Name is required</p>
+        <p class="text-[#e07070] text-[0.72rem] mt-1.5 mb-2">Last Name is required</p>
       }
 
-      <div class="flex flex-col">
-        <label class="text-sm font-medium text-gray-700">Email Address</label>
-        <input type="email" formControlName="email" placeholder="email@example.com"
-          class="mt-1 w-full px-4 py-2 placeholder-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition">
+      <div class="form-group mb-5">
+        <label>Email Address</label>
+        <input type="email" formControlName="email" placeholder="jane@example.com" class="form-input">
+        @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+          <p class="text-[#e07070] text-[0.72rem] mt-1.5">Please enter a valid email address</p>
+        }
       </div>
 
-      @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
-        <p class="text-red-500 text-xs mt-1">Please enter a valid email address</p>
-      }
 
-      <div class="flex flex-col">
-        <label class="text-sm font-medium text-gray-700">Date of Birth</label>
-        <input type="date" formControlName="dob"
-          class="mt-1 w-full px-4 py-2 text-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+      <div class="form-group mb-5">
+        <label>Date of Birth</label>
+        <input type="date" formControlName="dob" class="form-input" style="color-scheme: dark;">
+        @if (registerForm.get('dob')?.touched && registerForm.get('dob')?.invalid) {
+          <div class="text-[#e07070] text-[0.72rem] mt-1.5">
+            @if (registerForm.get('dob')?.errors?.['required']) {
+              <span>Date of birth is required</span>
+            }
+            @if (registerForm.get('dob')?.errors?.['futureDate']) {
+              <span>You can't be born in the future!</span>
+            }
+            @if (registerForm.get('dob')?.errors?.['underage']) {
+              <span>Too young to use the platform</span>
+            }
+          </div>
+        }
       </div>
-      @if (registerForm.get('dob')?.touched && registerForm.get('dob')?.invalid) {
-        <div class="text-red-500 text-xs mt-1">
-          @if (registerForm.get('dob')?.errors?.['required']) {
-            <span>Date of birth is required</span>
-          }
-          @if (registerForm.get('dob')?.errors?.['futureDate']) {
-            <span>You can't be born in the future!</span>
-          }
-          @if (registerForm.get('dob')?.errors?.['underage']) {
-            <span>Too young to use the platform</span>
-          }
-        </div>
-      }
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Password</label>
-          <input type="password" formControlName="password" placeholder="••••••••"
-            class="mt-1 w-full px-4 py-2 placeholder-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="form-group mb-0">
+          <label>Password</label>
+          <input type="password" formControlName="password" placeholder="••••••••" class="form-input">
         </div>
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Confirm</label>
-          <input type="password" formControlName="confirmPassword" placeholder="••••••••"
-            class="mt-1 w-full px-4 py-2 placeholder-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+        <div class="form-group mb-0">
+          <label>Confirm</label>
+          <input type="password" formControlName="confirmPassword" placeholder="••••••••" class="form-input">
         </div>
       </div>
 
       @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
-        <div class="text-red-500 text-xs mt-1">
+        <div class="text-[#e07070] text-[0.72rem] mt-1.5 mb-2">
           @if (registerForm.get('password')?.errors?.['required']) { <span>Password is required</span> }
           @if (registerForm.get('password')?.errors?.['minlength']) { <span>Minimum 8 characters required</span> }
         </div>
       }
       @else if (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) {
-        <p class="text-xs text-red-500 font-medium italic mt-1">
+        <p class="text-[#e07070] text-[0.72rem] italic mt-1.5 mb-2">
           * Passwords do not match.
         </p>
       }
 
-      <button type="submit" [disabled]="registerForm.invalid"
-        class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-bold py-3 rounded-lg mt-4 transition duration-200 shadow-md">
-        Sign Up
+      <button type="submit" [disabled]="registerForm.invalid" class="btn-gold mt-2">
+        Create Account
       </button>
+
+      <p class="text-center pt-5 text-[0.82rem] text-muted">Aready have an account? <a routerLink="/login" class="text-gold font-medium no-underline">Sign in</a></p>
     </form>
   </div>
 </div>

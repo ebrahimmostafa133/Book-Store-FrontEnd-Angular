@@ -29,7 +29,7 @@ export class Dashboard implements OnInit {
     orders: 0,
   }
 
-  isLoading = false
+  isLoading = true
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {

@@ -1,39 +1,44 @@
-<section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-4">
-  <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-    <h2 class="text-xl font-bold text-gray-800">Manage Categories</h2>
-    <button (click)="openModal()" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
-      Add Category
+<section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-6">
+  <div class="flex justify-between items-center bg-card p-5 md:p-6 rounded-2xl shadow-sm border border-line">
+    <h2 class="text-2xl font-serif text-white tracking-wide">Manage Categories</h2>
+    <button (click)="openModal()" class="btn-ghost py-2">
+      <i class="fa-solid fa-plus mr-2"></i> Add Category
     </button>
   </div>
 
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+  <div class="relative overflow-x-auto shadow-sm border border-line rounded-2xl bg-card">
+    <table class="w-full text-sm text-left rtl:text-right text-muted">
+      <thead class="text-xs text-light uppercase bg-surface border-b border-line">
         <tr>
-          <th scope="col" class="px-6 py-3">Category Name</th>
-          <th scope="col" class="px-6 py-3">Description</th>
-          <th scope="col" class="px-6 py-3">Actions</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Category Name</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Description</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider text-right">Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="divide-y divide-line">
         @for (category of displayCategories() | paginate: { id: 'adminCats', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track category?.id || $index) {
           @if (category) {
-            <tr class="bg-white border-b hover:bg-gray-50">
-              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            <tr class="bg-card hover:bg-surface/50 transition-colors duration-200">
+              <td class="px-6 py-5 font-serif font-medium text-white whitespace-nowrap text-[1.05rem]">
                 {{ category?.name }}
               </td>
-              <td class="px-6 py-4">
-                {{ category?.description || 'N/A' }}
+              <td class="px-6 py-5">
+                <p class="truncate max-w-md" [title]="category?.description">{{ category?.description || 'N/A' }}</p>
               </td>
-              <td class="px-6 py-4 flex gap-4">
-                <button (click)="openModal(category!)" class="font-medium text-blue-600 hover:underline">Edit</button>
-                <button (click)="deleteCategory(category!.id)" class="font-medium text-red-600 hover:underline">Delete</button>
+              <td class="px-6 py-5 flex items-center justify-end gap-3">
+                <button (click)="openModal(category!)" class="text-muted hover:text-gold transition-colors w-8 h-8 rounded-full bg-surface border border-line flex items-center justify-center" title="Edit">
+                  <i class="fa-solid fa-pen-to-square text-[0.85rem]"></i>
+                </button>
+                <button (click)="deleteCategory(category!.id)" class="text-muted hover:text-red-400 hover:border-red-400/50 transition-colors w-8 h-8 rounded-full bg-surface border border-line flex items-center justify-center" title="Delete">
+                  <i class="fa-solid fa-trash-can text-[0.85rem]"></i>
+                </button>
               </td>
             </tr>
           }
         } @empty {
           <tr>
-            <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+            <td colspan="3" class="px-6 py-12 text-center text-muted italic">
+               <i class="fa-solid fa-folder-open block text-3xl mb-3 opacity-50"></i>
               No categories found.
             </td>
           </tr>
@@ -41,43 +46,62 @@
       </tbody>
     </table>
   </div>
-  <div class="flex justify-center mt-4">
-    <pagination-controls id="adminCats" (pageChange)="onPageChange($event)" class="mt-4 items-center justify-center flex"></pagination-controls>
+  
+  <div class="flex justify-center mt-6 w-full filter-pagination-wrapper">
+    <pagination-controls 
+      id="adminCats" 
+      class="my-pagination"
+      (pageChange)="onPageChange($event)"
+      previousLabel=""
+      nextLabel="">
+    </pagination-controls>
   </div>
 </section>
 
 @if (isModalOpen) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto bg-gray-900/50">
-    <div class="relative w-full max-w-md bg-white rounded-lg shadow">
-      <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-        <h3 class="text-lg font-semibold text-gray-900">
-          {{ editingCategoryId ? 'Edit Category' : 'Add Category' }}
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto bg-ink/80 backdrop-blur-sm">
+    <div class="relative w-full max-w-lg bg-card rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-line custom-scrollbar">
+      
+      <div class="flex items-center justify-between p-6 border-b border-line bg-surface rounded-t-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gold/5 blur-3xl rounded-full"></div>
+        <h3 class="text-xl font-serif text-white tracking-wide relative z-10">
+          <i class="fa-solid fa-folder-plus text-gold mr-2"></i> {{ editingCategoryId ? 'Edit Category' : 'Add New Category' }}
         </h3>
-        <button (click)="closeModal()" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
-          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-          </svg>
+        <button (click)="closeModal()" type="button" class="text-muted hover:text-white transition-colors bg-card border border-line w-8 h-8 rounded-full flex items-center justify-center relative z-10">
+           <i class="fa-solid fa-xmark"></i>
           <span class="sr-only">Close modal</span>
         </button>
       </div>
 
-      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="p-4 md:p-5">
-        <div class="grid gap-4 mb-4 grid-cols-2">
-          <div class="col-span-2">
-            <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name</label>
-            <input type="text" id="name" formControlName="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Type category name">
+      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="p-6">
+        <div class="grid gap-6 mb-6">
+          <div>
+            <label for="name" class="block mb-2 text-[0.95rem] font-medium text-light">Name <span class="text-gold">*</span></label>
+            <input type="text" id="name" formControlName="name" class="form-input w-full" placeholder="Type category name">
             @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
-              <p class="text-red-500 text-xs mt-1">Name is required (min 3 chars).</p>
+              <p class="text-red-400 text-xs mt-2 flex items-center font-medium">
+                <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Name is required (min 3 chars).
+              </p>
             }
           </div>
-          <div class="col-span-2">
-            <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
-            <textarea id="description" formControlName="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Write Category description here"></textarea>
+          <div>
+            <label for="description" class="block mb-2 text-[0.95rem] font-medium text-light">Description</label>
+            <textarea id="description" formControlName="description" rows="5" class="form-input w-full" placeholder="Write Category description here"></textarea>
           </div>
         </div>
-        <button type="submit" [disabled]="categoryForm.invalid || isLoading" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50">
-          {{ editingCategoryId ? 'Update' : 'Add' }}
-        </button>
+        
+        <div class="flex justify-end gap-3 pt-4 border-t border-line">
+           <button type="button" (click)="closeModal()" class="px-5 py-2.5 text-muted hover:text-white transition-colors font-medium">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="categoryForm.invalid || isLoading" class="btn-ghost disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]">
+            @if(isLoading) {
+               <i class="fa-solid fa-circle-notch fa-spin"></i>
+            } @else {
+              {{ editingCategoryId ? 'Update Category' : 'Add Category' }}
+            }
+          </button>
+        </div>
       </form>
     </div>
   </div>

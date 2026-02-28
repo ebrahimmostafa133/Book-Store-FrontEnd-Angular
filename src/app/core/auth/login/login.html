@@ -1,42 +1,38 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-  <div class="max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden">
-    
-    <div class="bg-indigo-600 py-8 px-4 text-center">
-      <h2 class="text-3xl font-bold text-white">Welcome Back</h2>
-      <p class="mt-2 text-indigo-100 text-sm">Please enter your details</p>
+<div class="auth-scene">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-ornament">✦</div>
+      <h2 class="font-serif text-[1.6rem] font-normal text-white tracking-[0.02em]">Welcome Back</h2>
+      <p class="mt-1.5 text-[0.8rem] text-muted tracking-[0.03em]">Sign in to continue your reading journey</p>
     </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="p-8 space-y-4">
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="p-8">
       
-      <div class="space-y-1">
-        <label class="text-sm font-medium text-gray-700">Email Address</label>
-        <input type="email" formControlName="email" placeholder="name@company.com"
-          class="w-full px-4 py-3 placeholder-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition">
+      <div class="form-group mb-5">
+        <label>Email Address</label>
+        <input type="email" formControlName="email" placeholder="name@example.com" class="form-input">
         
         @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
-          <p class="text-red-500 text-xs mt-1">Please enter a valid email address</p>
+          <p class="text-[#e07070] text-[0.72rem] mt-1.5">Please enter a valid email address</p>
         }
       </div>
 
-      <div class="space-y-1">
-        <div class="flex justify-between items-center">
-          <label class="text-sm font-medium text-gray-700">Password</label>
-          <a routerLink="/forget-password" class="text-xs text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+      <div class="form-group mb-5">
+        <div class="flex justify-between items-center mb-1">
+          <label>Password</label>
+          <a routerLink="/forget-password" class="text-[0.72rem] text-gold no-underline opacity-80 transition-opacity hover:opacity-100">Forgot password?</a>
         </div>
-        <input type="password" formControlName="password" placeholder="••••••••"
-          class="w-full px-4 py-3 placeholder-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition">
+        <input type="password" formControlName="password" placeholder="••••••••" class="form-input">
       </div>
 
-      <div class="pt-2">
-        <button type="submit" [disabled]="loginForm.invalid"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg transition duration-200 shadow-md">
-          Sign In
-        </button>
-      </div>
+      <button type="submit" [disabled]="loginForm.invalid" class="btn-gold">
+        Sign In
+      </button>
 
-      <p class="text-center text-sm text-gray-600 mt-4">
+      <p class="text-center pt-5 text-[0.82rem] text-muted">
         Don't have an account? 
-        <a href="/register" class="text-indigo-600 font-semibold hover:underline">Create one</a>
+        <a routerLink="/register" class="text-gold font-medium no-underline">Create one</a>
       </p>
     </form>
   </div>

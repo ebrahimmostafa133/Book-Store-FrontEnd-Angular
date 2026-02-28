@@ -1,66 +1,82 @@
-<section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-4">
-  <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-    <h2 class="text-xl font-bold text-gray-800">Manage Orders</h2>
+<section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-6">
+  <div class="flex justify-between items-center bg-card p-5 md:p-6 rounded-2xl shadow-sm border border-line">
+    <h2 class="text-2xl font-serif text-white tracking-wide">Manage Orders</h2>
   </div>
 
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <div class="relative overflow-x-auto shadow-sm border border-line rounded-2xl bg-card">
     @if (isLoading) {
-      <div class="text-center py-8 text-gray-500">Loading orders...</div>
+      <div class="flex flex-col justify-center items-center py-24">
+        <div class="animate-spin rounded-full h-12 w-12 border-[3px] border-surface border-t-gold mb-6"></div>
+        <p class="text-muted font-serif">Loading orders...</p>
+      </div>
     } @else {
-      <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <table class="w-full text-sm text-left rtl:text-right text-muted">
+        <thead class="text-xs text-light uppercase bg-surface border-b border-line">
           <tr>
-            <th scope="col" class="px-6 py-3">Order ID</th>
-            <th scope="col" class="px-6 py-3">User</th>
-            <th scope="col" class="px-6 py-3">Total Amount</th>
-            <th scope="col" class="px-6 py-3">Date</th>
-            <th scope="col" class="px-6 py-3">Status</th>
-            <th scope="col" class="px-6 py-3">Actions</th>
+            <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Order ID</th>
+            <th scope="col" class="px-6 py-5 font-semibold tracking-wider">User</th>
+            <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Total Amount</th>
+            <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Date</th>
+            <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Status</th>
+            <th scope="col" class="px-6 py-5 font-semibold tracking-wider text-right">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="divide-y divide-line">
           @for (order of displayOrders() | paginate: { id: 'adminOrders', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track order?.id || $index) {
             @if (order) {
-              <tr class="bg-white border-b hover:bg-gray-50">
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  {{ order?.id }}
+              <tr class="bg-card hover:bg-surface/50 transition-colors duration-200">
+                <td class="px-6 py-5 font-mono font-medium text-white whitespace-nowrap">
+                  #{{ order?.id?.slice(-8) }}
                 </td>
-                <td class="px-6 py-4 text-xs font-mono">
-                  <div class="flex flex-col">
-                    <span>ID: {{ order?.user?.id }}</span>
-                    <span>Email: {{ order?.user?.email }}</span>
+                <td class="px-6 py-5 text-[0.85rem]">
+                  <div class="flex flex-col gap-1.5">
+                    <span class="text-light flex items-center gap-2"><i class="fa-solid fa-id-badge text-muted text-xs"></i> <span class="font-mono">{{ order?.user?.id?.slice(-6) }}</span></span>
+                    <span class="text-muted flex items-center gap-2"><i class="fa-regular fa-envelope text-xs"></i> {{ order?.user?.email }}</span>
                   </div>
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-5 font-bold text-gold text-[1.05rem]">
                   {{ order?.totalAmount | currency }}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-5 text-light">
                   {{ order?.createdAt | date:'mediumDate' }}
                 </td>
-                <td class="px-6 py-4">
-                  <select (change)="updateStatus(order!.id, $event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                    @for (status of statusOptions; track status) {
-                      <option [value]="status" [selected]="status === order?.status">{{ status | titlecase }}</option>
-                    }
-                  </select>
+                <td class="px-6 py-5">
+                  <div class="relative w-40">
+                    <select (change)="updateStatus(order!.id, $event)" class="form-input w-full appearance-none pr-10 py-2 text-[0.85rem] font-medium uppercase tracking-wider h-10">
+                      @for (status of statusOptions; track status) {
+                        <option [value]="status" [selected]="status === order?.status">{{ status }}</option>
+                      }
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none text-xs"></i>
+                  </div>
                 </td>
-                <td class="px-6 py-4">
-                  <button (click)="deleteOrder(order!.id)" class="font-medium text-red-600 hover:underline">Delete</button>
+                <td class="px-6 py-5 flex items-center justify-end">
+                   <button (click)="deleteOrder(order!.id)" class="text-muted hover:text-red-400 hover:border-red-400/50 transition-colors w-8 h-8 rounded-full bg-surface border border-line flex items-center justify-center mt-1" title="Delete">
+                    <i class="fa-solid fa-trash-can text-[0.85rem]"></i>
+                  </button>
                 </td>
               </tr>
             }
           }
- @empty {
+           @empty {
             <tr>
-              <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+              <td colspan="6" class="px-6 py-12 text-center text-muted italic">
+                <i class="fa-solid fa-box-open block text-3xl mb-3 opacity-50"></i>
                 No orders found.
               </td>
             </tr>
           }
         </tbody>
       </table>
-      <div class="flex justify-center mt-4 pb-4 px-4">
-        <pagination-controls id="adminOrders" (pageChange)="onPageChange($event)" class="mt-4 items-center justify-center flex"></pagination-controls>
+      
+      <div class="flex justify-center mt-6 w-full filter-pagination-wrapper pb-6">
+        <pagination-controls 
+          id="adminOrders" 
+          class="my-pagination"
+          (pageChange)="onPageChange($event)"
+          previousLabel=""
+          nextLabel="">
+        </pagination-controls>
       </div>
     }
   </div>
