@@ -10,6 +10,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(catchError((err) => {
     if (err.status === 401) {
+      if (req.url.includes('/login')) {
+        toastrService.error(err.error?.message || 'Incorrect email or password')
+        return throwError(() => err)
+      }
+
       if (authService.decodedToken) {
         toastrService.error('Session expired. Please login again.')
       } else {
