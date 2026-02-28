@@ -11,6 +11,7 @@
     <!-- Desktop Navigation Links -->
     <ul class="hidden md:flex gap-8 list-none m-0 p-0">
         @if (isAdmin()) {
+          <li><a routerLink="/admin/dashboard" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Dashboard</a></li>
           <li><a routerLink="/admin/books" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Manage Books</a></li>
           <li><a routerLink="/admin/categories" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Manage Categories</a></li>
           <li><a routerLink="/admin/authors" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Manage Authors</a></li>
@@ -50,35 +51,19 @@
           </a>
         }
         
-        <button (click)="toggleDropdown()" type="button" class="bg-transparent border-none text-muted text-[1.1rem] cursor-pointer p-1.5 transition-colors hover:text-light" id="user-menu-button">
-          <i class="fa-solid fa-circle-user"></i>
+        @if (isUser()) {
+          <a routerLink="/profile" class="bg-transparent border-none text-muted text-[1.1rem] cursor-pointer p-1.5 transition-colors hover:text-gold" title="Profile">
+            <i class="fa-solid fa-circle-user"></i>
+          </a>
+        }
+        @if (isAdmin()) {
+          <a routerLink="/admin/profile" class="bg-transparent border-none text-muted text-[1.1rem] cursor-pointer p-1.5 transition-colors hover:text-gold" title="Profile">
+            <i class="fa-solid fa-circle-user"></i>
+          </a>
+        }
+        <button (click)="logout()" class="bg-transparent border-none text-[#e07070] text-[1.1rem] cursor-pointer p-1.5 transition-colors hover:text-red-500" title="Logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
         </button>
-
-        <div class="z-50 min-w-44 text-base list-none bg-card divide-y divide-line rounded-lg shadow-xl border border-line absolute top-12 right-0" [class.hidden]="!isDropdownOpen" id="user-dropdown">
-          <div class="px-4 py-3">
-            <span class="block text-sm text-white font-bold">Account</span>
-            <span class="block text-sm text-muted capitalize truncate">{{ authService.userRole }}</span>
-          </div>
-          <ul class="py-2" aria-labelledby="user-menu-button">
-            <li>
-              @if (isUser()) {
-                <a routerLink="/profile" (click)="closeMenus()" class="block px-4 py-2 text-sm text-light hover:bg-white/5 transition-colors">
-                  <i class="fa-solid fa-address-card mr-2 w-4"></i> Profile
-                </a>
-              }
-              @if (isAdmin()) {
-                <a routerLink="/admin/profile" (click)="closeMenus()" class="block px-4 py-2 text-sm text-light hover:bg-white/5 transition-colors">
-                  <i class="fa-solid fa-address-card mr-2 w-4"></i> Profile
-                </a>
-              }
-            </li>
-            <li>
-              <button (click)="logout()" class="w-full text-left block px-4 py-2 text-sm text-[#e07070] hover:bg-[#e07070]/10 transition-colors">
-                <i class="fa-solid fa-right-from-bracket mr-2 w-4"></i> Logout
-              </button>
-            </li>
-          </ul>
-        </div>
       } @else {
         <div class="hidden md:flex gap-3">
           <a routerLink="/login" (click)="closeMenus()" class="btn-ghost">Login</a>
