@@ -1,7 +1,7 @@
 import type {Cart} from '../interfaces/cart.interface'
 import {HttpClient} from '@angular/common/http'
 import {computed, inject, Injectable, signal} from '@angular/core'
-import {concatMap, Subject, tap} from 'rxjs'
+import {catchError, concatMap, Subject, tap} from 'rxjs'
 import {environment} from '../../../environments/environment'
 
 @Injectable({
@@ -64,6 +64,10 @@ export class CartService {
   getCart() {
     return this.httpClient.get<{data: Cart}>(this.apiUrl).pipe(
       tap(res => this.cart.set(res.data)),
+      catchError((err) => {
+        this.cart.set(null)
+        throw err
+      }),
     )
   }
 

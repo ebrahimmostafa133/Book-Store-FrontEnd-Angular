@@ -11,9 +11,10 @@ export class OrdersService {
   private apiUrl = `${environment.baseUrl}/order`
   private readonly httpClient = inject(HttpClient)
 
-  placeOrder(shippingAddress: any, paymentMethod: string) {
+  placeOrder(shippingAddress: string, phone: string, paymentMethod: string) {
     return this.httpClient.post<{data: Order}>(this.apiUrl, {
       shippingAddress,
+      phone,
       paymentMethod,
     })
   }

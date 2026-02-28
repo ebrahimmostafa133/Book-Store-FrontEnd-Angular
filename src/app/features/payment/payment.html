@@ -69,8 +69,8 @@
         Thank you for your purchase. Your payment has been processed and your order will be shipped soon.
       </p>
       <div class="bg-gray-50 p-4 rounded-lg mb-8 w-full max-w-md">
-        <p class="text-sm text-gray-600">Order ID: <span class="font-bold text-gray-800">#ORD-{{ (cart()?.id || '').substring(0, 8) }}</span></p>
-        <p class="text-sm text-gray-600 mt-2">Total Amount: <span class="font-bold text-gray-800">{{ cart()?.totalAmount | currency }}</span></p>
+        <p class="text-sm text-gray-600">Order ID: <span class="font-bold text-gray-800">#ORD-{{ completedOrderId().substring(0, 8) }}</span></p>
+        <p class="text-sm text-gray-600 mt-2">Total Amount: <span class="font-bold text-gray-800">{{ completedTotalAmount() | currency }}</span></p>
       </div>
       <button (click)="continueShopping()"
               class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg">

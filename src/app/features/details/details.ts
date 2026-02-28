@@ -170,6 +170,11 @@ export class Details implements OnInit {
   }
 
   addToCart(bookId: string): void {
+    const currentBook = this.book()
+    if (currentBook && currentBook.stock === 0) {
+      this.toastr.error('This book is currently out of stock.')
+      return
+    }
     this.cartService.addToCart(bookId, 1)
     // TODO: delete if we are ok with it:
     // this.cartService.addToCart(bookId, 1).subscribe({

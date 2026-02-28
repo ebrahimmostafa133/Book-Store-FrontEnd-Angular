@@ -53,24 +53,16 @@ export class ManageOrders implements OnInit {
     this.isLoading = true
     this.ordersService.getAllOrders(this.currentPage(), this.itemsPerPage).subscribe({
       next: (res: any) => {
-        this.orders.set(res.data || res)
+        this.orders.set(res.orders)
+        this.totalItems.set(res.totalItems)
         this.isLoading = false
         this.cdr.detectChanges()
+        console.log(res.orders)
       },
       error: (_err) => {
         this.toastr.error('Error loading orders')
         this.isLoading = false
         this.cdr.detectChanges()
-      },
-    })
-
-    this.ordersService.getCount().subscribe({
-      next: (res: any) => {
-        this.totalItems.set(res.data)
-        this.cdr.detectChanges()
-      },
-      error: (_err) => {
-        console.error('Error loading orders count')
       },
     })
   }

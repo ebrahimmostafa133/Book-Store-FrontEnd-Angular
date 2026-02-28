@@ -41,7 +41,6 @@ export class Dashboard implements OnInit {
         orders: this.ordersService.getCount().pipe(catchError(() => of({data: 0}))),
       }).subscribe({
         next: (res: any) => {
-          console.log('Dashboard stats loaded:', res)
           this.stats.books = res.books?.data || 0
           this.stats.authors = res.authors?.data || 0
           this.stats.categories = res.categories?.data || 0

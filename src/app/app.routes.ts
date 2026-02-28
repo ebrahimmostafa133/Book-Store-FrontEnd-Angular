@@ -31,7 +31,6 @@ export const routes: Routes = [
       {path: 'payment', loadComponent: () => import('./features/payment/payment').then(m => m.Payment)},
       {path: 'allorders', loadComponent: () => import('./features/allorders/allorders').then(m => m.Allorders)},
       {path: 'profile', loadComponent: () => import('./features/profile/profile').then(m => m.Profile)},
-      {path: 'wishlist', loadComponent: () => import('./features/wishlist/wishlist').then(m => m.Wishlist)},
     ],
   },
   {
