@@ -29,8 +29,11 @@ export class Checkout implements OnInit {
 
   cart = signal<Cart | null>(null)
   checkoutForm!: FormGroup
+  fullName = signal<string>('')
   isProcessing = signal(false)
   orderPlaced = signal(false)
+  completedOrderId = signal<string>('')
+  completedTotalAmount = signal<number>(0)
 
   ngOnInit() {
     this.initForm()
@@ -42,11 +45,7 @@ export class Checkout implements OnInit {
     this.userService.getUserProfile().subscribe({
       next: (res) => {
         if (res.data) {
-          this.checkoutForm.patchValue({
-            firstName: res.data.firstName,
-            lastName: res.data.lastName,
-            email: res.data.email,
-          })
+          this.fullName.set(`${res.data.firstName} ${res.data.lastName}`)
         }
       },
       error: (err) => {
@@ -58,9 +57,6 @@ export class Checkout implements OnInit {
   initForm() {
     this.checkoutForm = this.fb.group({
       // Shipping Information
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern(/^\d{10,}$/)]],
       address: ['', [Validators.required, Validators.minLength(5)]],
 
@@ -94,27 +90,28 @@ export class Checkout implements OnInit {
     this.isProcessing.set(true)
     this.spinner.show()
 
-    // Prepare shipping address
-    const shippingAddress = {
-      street: this.checkoutForm.get('address')?.value,
-      phone: this.checkoutForm.get('phone')?.value,
-      city: 'N/A',
-      zipCode: '00000',
-    }
-
+    // Prepare shipping data
+    const shippingAddress = this.checkoutForm.get('address')?.value
+    const phone = this.checkoutForm.get('phone')?.value
     const paymentMethod = this.checkoutForm.get('paymentMethod')?.value
 
     if (paymentMethod === 'visa') {
       this.isProcessing.set(false)
       this.spinner.hide()
-      this.router.navigate(['/payment'], {state: {shippingAddress}})
+      this.router.navigate(['/payment'], {state: {shippingAddress, phone}})
       return
     }
 
     // Process Cash on Delivery
-    this.ordersService.placeOrder(shippingAddress, 'COD').subscribe({
+    const currentCart = this.cart()
+    if (currentCart) {
+      this.completedOrderId.set(currentCart.id || '')
+      this.completedTotalAmount.set(currentCart.totalAmount || 0)
+    }
+
+    this.ordersService.placeOrder(shippingAddress, phone, 'COD').subscribe({
       next: () => {
-        this.cartService.getCart().subscribe() // Refetch cart to clear numbers after the order
+        this.cartService.getCart().subscribe({error: () => {}}) // Refetch cart to clear numbers after the order
         this.isProcessing.set(false)
         this.spinner.hide()
         this.router.navigate(['/allorders']) // Redirecting to all orders on successful CoD

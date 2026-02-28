@@ -2,14 +2,14 @@ import type {Book} from './book.interface'
 
 export interface Order {
   id: string
-  user: string
+  user: {
+    email: string
+    id: string
+  }
+  shippingAddress: string
+  phone: string
   items: OrderItem[]
   totalAmount: number
-  shippingAddress: {
-    street: string
-    city: string
-    zipCode: string
-  }
   status: string
   paymentStatus: string
   paymentMethod: string

@@ -25,6 +25,8 @@ export class Payment implements OnInit {
   paymentForm!: FormGroup
   isProcessing = signal(false)
   orderPlaced = signal(false)
+  completedOrderId = signal<string>('')
+  completedTotalAmount = signal<number>(0)
   shippingAddress: any = null
   cart = this.cartService.cart
 
@@ -53,13 +55,19 @@ export class Payment implements OnInit {
     this.isProcessing.set(true)
     this.spinner.show()
 
+    const currentCart = this.cart()
+    if (currentCart) {
+      this.completedOrderId.set(currentCart.id || '')
+      this.completedTotalAmount.set(currentCart.totalAmount || 0)
+    }
+
     // Call the checkout service to create a payment intent using the shipped address
     this.checkoutService.createPaymentIntent(this.shippingAddress).subscribe({
       next: (res) => {
         if (res.success) {
           this.orderPlaced.set(true)
           // Refetch the cart to clear the numbers in navbar after ordering
-          this.cartService.getCart().subscribe()
+          this.cartService.getCart().subscribe({error: () => {}})
         }
         this.isProcessing.set(false)
         this.spinner.hide()

@@ -3,6 +3,7 @@ import {CommonModule, isPlatformBrowser} from '@angular/common'
 import {Component, computed, inject, PLATFORM_ID} from '@angular/core'
 import {Router, RouterModule} from '@angular/router'
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner'
+import {ToastrService} from 'ngx-toastr'
 import {CartService} from '../../core/services/cart.service'
 
 @Component({
@@ -17,12 +18,14 @@ export class Cart implements OnInit {
   private spinner = inject(NgxSpinnerService)
   private platformId = inject(PLATFORM_ID)
   private router = inject(Router)
+  private toastr = inject(ToastrService)
 
   cart = this.cartService.cart
 
   cartItems = computed(() => this.cart()?.items || [])
   totalAmount = computed(() => this.cart()?.totalAmount || 0)
   isEmpty = computed(() => this.cartItems().length === 0)
+  hasOutOfStockItems = computed(() => this.cartItems().some(item => item.book.stock === 0))
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -57,6 +60,10 @@ export class Cart implements OnInit {
   }
 
   proceedToCheckout() {
+    if (this.hasOutOfStockItems()) {
+      this.toastr.error('Please remove out-of-stock items before checkout.')
+      return
+    }
     this.router.navigate(['/checkout'])
   }
 }
