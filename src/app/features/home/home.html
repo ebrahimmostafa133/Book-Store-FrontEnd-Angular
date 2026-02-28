@@ -1,1 +1,100 @@
-<p>home works!</p>
+
+<section class="bg-white dark:bg-gray-900 ">
+<!-- Hero Carousel Section -->
+<section class="bg-white dark:bg-gray-900 relative">
+  <owl-carousel-o [options]="mainOption">
+    <ng-template carouselSlide>
+      <img src="1.png" alt="Library" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+    </ng-template>
+    <ng-template carouselSlide>
+      <img src="2.png" alt="Books Collection" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+    </ng-template>
+    <ng-template carouselSlide>
+      <img src="3.png" alt="Reading" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+    </ng-template>
+    <ng-template carouselSlide>
+      <img src="library1.webp" alt="Bookstore" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+    </ng-template>
+  </owl-carousel-o>
+  
+  <div class="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
+    <div class="pointer-events-auto flex flex-col sm:flex-row gap-4 mt-20">
+      <a routerLink="/books" class="px-8 py-3.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[1.2rem]">menu_book</span>
+        View Books
+      </a>
+      <a routerLink="/categories" class="px-8 py-3.5 bg-white/20 hover:bg-white/30 text-white backdrop-blur-md rounded-xl font-bold transition-colors border border-white/30 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[1.2rem]">category</span>
+        View Categories
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Books Section -->
+<section class="py-16 md:py-24 antialiased bg-white dark:bg-transparent transition-colors duration-300 border-t border-slate-200 dark:border-slate-800">
+  <div class="max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto w-full">
+    <div class="mb-10 flex items-center justify-between">
+      <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Best Rated Books</h2>
+      <a routerLink="/books" class="text-sm font-semibold text-primary transition-colors hover:text-primary/80 group flex items-center gap-1">
+        View Collection <span class="material-symbols-outlined text-[1.1rem] transition-transform group-hover:translate-x-1">arrow_forward</span>
+      </a>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      @for (book of books(); track book.id) {
+        <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm hover:shadow-lg hover:border-primary/50 transition-all duration-300 group flex flex-col h-full relative overflow-hidden">
+          
+          <div class="h-64 w-full relative mb-4 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800 cursor-pointer flex-shrink-0">
+            <a [routerLink]="['/details', book.id]">
+              <img class="mx-auto h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" [src]="book.bookCover" [alt]="book.name" />
+            </a>
+            <div class="absolute top-3 right-3 text-[0.7rem] font-bold text-slate-700 bg-white/90 backdrop-blur-md dark:bg-slate-900/90 dark:text-slate-300 px-3 py-1 rounded-full shadow-sm">
+              {{ book.category.name }}
+            </div>
+          </div>
+          
+          <div class="pt-2 flex flex-col flex-grow">
+            <h3 class="text-lg font-bold leading-tight text-slate-900 dark:text-white transition-colors hover:text-primary cursor-pointer line-clamp-2">
+              <a [routerLink]="['/details', book.id]">{{ book.name }}</a>
+            </h3>
+            
+            <p class="text-[0.85rem] font-semibold text-slate-500 dark:text-slate-400 mb-3 truncate mt-1 pb-3 border-b border-slate-100 dark:border-slate-800/60">by {{ book.author.name }}</p>
+
+            <div class="mt-auto pt-3 flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                 <div class="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-full px-2.5 py-1">
+                   <span class="material-symbols-outlined text-amber-500 text-[1rem]">star</span>
+                   <p class="text-xs font-bold text-amber-700 dark:text-amber-400">{{ book.averageRating }}</p>
+                 </div>
+                 <p class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">{{ book.price | currency }}</p>
+              </div>
+
+              <a [routerLink]="['/details', book.id]" class="w-full py-2.5 mt-0 text-center flex justify-center items-center gap-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-[1.1rem]">menu_book</span>
+                Book Details
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (!isLoading() && books().length === 0) {
+      <div class="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mt-6">
+        <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3">auto_stories</span>
+        <h3 class="text-xl text-slate-500 dark:text-slate-400 font-bold">No trending books found.</h3>
+      </div>
+    }
+
+    @if (isLoading()) {
+      <div class="flex flex-col justify-center items-center py-24">
+        <div class="animate-spin rounded-full h-12 w-12 border-[3px] border-slate-200 dark:border-slate-800 border-t-primary mb-6"></div>
+        <p class="text-slate-500 font-medium">Loading books collections...</p>
+      </div>
+    }
+  </div>
+</section>  
+</section>
+

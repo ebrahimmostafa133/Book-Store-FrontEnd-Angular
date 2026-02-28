@@ -1,1 +1,150 @@
-<p>allorders works!</p>
+<!-- My Orders Section -->
+<section class="py-12 antialiased min-h-screen">
+  <div class="max-w-[1280px] px-8 mx-auto w-full">
+    <div class="mb-10 border-b border-line pb-6">
+      <h1 class="text-3xl font-serif text-white sm:text-4xl tracking-wide">My Orders</h1>
+      <p class="mt-2 text-md text-muted">Track and manage your recent purchases.</p>
+    </div>
+
+    @if (totalItems() > 0) {
+      <div class="relative overflow-x-auto shadow-sm border border-line rounded-2xl bg-card">
+        <table class="w-full text-sm text-left text-muted">
+          <thead class="text-xs text-light uppercase bg-surface border-b border-line">
+            <tr>
+              <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Order ID</th>
+              <th scope="col" class="px-6 py-5 font-semibold tracking-wider text-right">Receipt</th>
+              <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Date</th>
+              <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Status</th>
+              <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Total</th>
+              <th scope="col" class="px-6 py-5 font-semibold tracking-wider text-right">Items</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-line">
+            @for (order of orders() | paginate: { id: 'ordersControl', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track order?.id || $index) {
+                <tr class="bg-card hover:bg-surface/50 transition-colors duration-200">
+                  <td class="px-6 py-5 font-mono font-medium text-white whitespace-nowrap">
+                    #{{ order.id.slice(-8).toUpperCase() }}
+                  </td>
+                  <td class="px-6 py-5 text-right whitespace-nowrap">
+                    <button (click)="openReceipt(order)" class="text-[0.85rem] font-medium text-gold hover:text-white transition-colors bg-surface border border-line px-3 py-1.5 rounded-lg flex items-center gap-2 ml-auto">
+                      <i class="fa-solid fa-receipt"></i> View Receipt
+                    </button>
+                  </td>
+                  <td class="px-6 py-5 whitespace-nowrap text-light">
+                    {{ order.createdAt | date:'mediumDate' }}
+                  </td>
+                  <td class="px-6 py-5 whitespace-nowrap">
+                    <span [class]="getStatusClass(order.status)" class="px-3 py-1.5 rounded-full text-[0.7rem] font-bold uppercase tracking-wider bg-surface border border-line inline-flex items-center gap-1.5">
+                      <i class="fa-solid fa-circle text-[0.4rem]"></i> {{ order.status }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-5 font-bold text-white whitespace-nowrap text-[1.05rem]">
+                    {{ order.totalAmount | currency }}
+                  </td>
+                  <td class="px-6 py-5 text-right whitespace-nowrap text-light">
+                    {{ order.items.length }} items
+                  </td>
+                </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (totalItems() > itemsPerPage) {
+        <div class="mt-12 flex justify-center w-full filter-pagination-wrapper">
+          <pagination-controls 
+            id="ordersControl" 
+            class="my-pagination"
+            (pageChange)="onPageChange($event)"
+            previousLabel=""
+            nextLabel="">
+          </pagination-controls>
+        </div>
+      }
+    }
+
+    @if (!isLoading() && totalItems() === 0) {
+      <div class="text-center py-24 bg-card rounded-3xl border border-line border-dashed w-full max-w-4xl mx-auto shadow-sm">
+        <div class="w-24 h-24 bg-surface rounded-full flex items-center justify-center mb-6 mx-auto border border-line">
+          <div class="text-4xl text-muted opacity-50">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+        </div>
+        <h2 class="mb-3 text-2xl font-serif text-white tracking-wide">No Orders Found</h2>
+        <p class="font-light text-muted mb-8 max-w-sm mx-auto leading-relaxed">You haven't placed any orders yet. Start shopping to explore our collection!</p>
+        <a routerLink="/books" class="btn-ghost px-8 py-3.5 inline-flex items-center">
+          Browse books
+          <i class="fa-solid fa-arrow-right-long ml-2"></i>
+        </a>
+      </div>
+    }
+
+    @if (isLoading()) {
+      <div class="flex flex-col justify-center items-center py-32">
+        <div class="animate-spin rounded-full h-12 w-12 border-[3px] border-surface border-t-gold mb-6"></div>
+        <p class="text-muted font-serif">Loading your orders...</p>
+      </div>
+    }
+  </div>
+
+  @if (selectedOrder(); as order) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-md">
+      <div class="bg-card rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] max-w-md w-full max-h-[90vh] overflow-y-auto border border-line custom-scrollbar">
+        <div class="p-8">
+          <div class="flex justify-between items-start mb-8">
+            <h2 class="text-2xl font-serif text-white flex items-center gap-3">
+              <i class="fa-solid fa-receipt text-gold"></i> Order Receipt
+            </h2>
+            <button (click)="closeReceipt()" class="text-muted hover:text-white transition-colors bg-surface border border-line w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="border-b border-dashed border-line/50 pb-5 mb-6 bg-surface p-4 rounded-xl border-x border-t relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-16 h-16 bg-gold/5 blur-2xl rounded-full"></div>
+            <p class="text-[0.85rem] text-muted font-serif mb-1">Order ID</p>
+            <p class="text-white font-mono tracking-widest text-lg mb-4">#{{ order.id }}</p>
+            
+            <p class="text-[0.85rem] text-muted font-serif mb-1">Date</p>
+            <p class="text-light">{{ order.createdAt | date:'longDate' }}</p>
+          </div>
+
+          <div class="space-y-4 mb-8 max-h-[30vh] overflow-y-auto pr-2 custom-scrollbar">
+            <h3 class="text-sm font-semibold text-muted uppercase tracking-wider mb-2">Order Items</h3>
+            @for (item of order.items; track item.book.id) {
+              <div class="flex justify-between items-center pb-3 border-b border-line last:border-0 last:pb-0">
+                <div class="pr-3">
+                  <p class="font-serif text-white leading-tight mb-1">{{ item.book.name }}</p>
+                  <p class="text-[0.8rem] text-muted">Qty: {{ item.quantity }} x {{ item.priceAtPurchase | currency }}</p>
+                </div>
+                <span class="text-gold font-bold whitespace-nowrap">{{ (item.quantity * item.priceAtPurchase) | currency }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="bg-surface border border-line p-5 rounded-xl space-y-3 mb-8 shadow-inner relative overflow-hidden">
+             <!-- decorative corner cutouts simulation -->
+             <div class="absolute -left-2 -top-2 w-4 h-4 rounded-full bg-card border border-line"></div>
+             <div class="absolute -right-2 -top-2 w-4 h-4 rounded-full bg-card border border-line"></div>
+             <div class="absolute -left-2 -bottom-2 w-4 h-4 rounded-full bg-card border border-line"></div>
+             <div class="absolute -right-2 -bottom-2 w-4 h-4 rounded-full bg-card border border-line"></div>
+
+            <div class="flex flex-col text-[0.9rem] mb-2">
+              <span class="text-muted font-medium mb-1 border-b border-line pb-1 w-fit">Shipping to:</span>
+              <span class="text-light leading-relaxed pt-1">{{ order.shippingAddress }}</span>
+            </div>
+            
+            <div class="flex justify-between text-xl font-serif font-bold pt-4 border-t border-dashed border-line relative mt-4">
+              <span class="text-white uppercase tracking-widest text-[1rem] flex items-end">Total</span>
+              <span class="text-gold text-2xl">{{ order.totalAmount | currency }}</span>
+            </div>
+          </div>
+
+          <button (click)="closeReceipt()" class="w-full btn-gold py-3 text-center flex justify-center items-center font-bold tracking-wider uppercase text-sm">
+            Close Receipt
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</section>

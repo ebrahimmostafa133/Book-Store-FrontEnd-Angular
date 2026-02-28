@@ -1,1 +1,219 @@
-<p>details works!</p>
+<!-- Book Details Section -->
+<section class="py-12 antialiased min-h-screen">
+  <div class="max-w-[1280px] px-8 mx-auto w-full">
+    
+    @let currentBook = book();
+    @if (currentBook) {
+      <div class="lg:grid lg:grid-cols-2 lg:gap-12 xl:gap-16">
+        
+        <!-- Left Column: Book Cover -->
+        <div class="shrink-0 max-w-md lg:max-w-lg mx-auto mb-8 lg:mb-0 w-full">
+          <div class="bg-surface border border-line rounded-2xl p-6 shadow-sm flex items-center justify-center h-[550px]">
+            <img class="max-h-full max-w-full rounded-md shadow-lg object-contain" [src]="currentBook.bookCover" [alt]="currentBook.name" />
+          </div>
+        </div>
+
+        <!-- Right Column: Book Info -->
+        <div class="mt-6 sm:mt-8 lg:mt-0 flex flex-col">
+          <h1 class="text-3xl font-serif text-white sm:text-4xl lg:text-5xl tracking-wide leading-tight">
+            {{ currentBook.name }}
+          </h1>
+          
+          <div class="mt-4 sm:items-center sm:gap-4 sm:flex">
+            <p class="text-2xl font-bold text-white sm:text-3xl">
+              {{ currentBook.price | currency }}
+            </p>
+
+            <div class="flex items-center gap-2 mt-2 sm:mt-0">
+              <div class="flex items-center gap-1.5 bg-surface border border-line rounded-full px-3 py-1 mt-1 sm:mt-0">
+                <i class="fa-solid fa-star text-gold text-[0.85rem]"></i>
+                <p class="text-sm font-medium leading-none text-light pt-0.5">
+                  {{ currentBook.averageRating }} / 5
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra details like category and author -->
+          <div class="my-8 text-[0.95rem] text-muted space-y-3 bg-surface border border-line rounded-xl p-5 shadow-sm">
+            <div class="flex items-baseline gap-2">
+              <span class="font-serif text-white w-20">Author:</span> 
+              <span class="text-light italic">{{ currentBook.author.name }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-serif text-white w-20">Category:</span>
+              <span class="bg-card border border-line text-gold text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">{{ currentBook.category.name }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-serif text-white w-20 flex-shrink-0">Status:</span>
+              @if (currentBook.stock > 0) {
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  In Stock
+                  @if (currentBook.stock < 5) {
+                    <span class="ml-1 text-orange-400 font-bold">({{ currentBook.stock }} left!)</span>
+                  }
+                </span>
+              } @else {
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-surface text-muted border border-line">
+                  <i class="fa-solid fa-circle-info"></i>
+                  OUT OF STOCK
+                </span>
+              }
+            </div>
+          </div>
+
+          <div class="mt-2 sm:gap-4 flex sm:mt-4">
+            <button 
+              type="button" 
+              (click)="addToCart(currentBook.id)" 
+              [disabled]="currentBook.stock === 0"
+              class="w-[280px] btn-gold py-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-gold/10"
+            >
+              <i class="fa-solid fa-cart-shopping"></i>
+              {{ currentBook.stock === 0 ? 'Out of Stock' : 'Add to cart' }}
+            </button>
+          </div>
+
+          <hr class="my-8 md:my-10 border-line" />
+
+          <!-- Description -->
+          <div class="text-muted text-base font-normal mb-10">
+            <h2 class="text-2xl font-serif text-white mb-4 border-l-2 border-gold pl-3">Synopsis</h2>
+            <p class="leading-relaxed">
+              {{ currentBook.description || 'Dive into this incredible journey crafted by ' + currentBook.author.name + '. Perfect for readers who enjoy ' + currentBook.category.name + '.' }}
+            </p>
+          </div>
+
+          <!-- Reviews & Comments Section -->
+          <div class="bg-card rounded-xl p-6 md:p-8 border border-line shadow-sm">
+            <h2 class="text-2xl font-serif text-white mb-6">Customer Reviews</h2>
+
+            <!-- Add/Edit Review Form -->
+            <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" id="review-form" class="mb-10 bg-surface p-6 rounded-xl border border-line">
+              <h3 class="text-lg font-serif text-white mb-4 flex items-center gap-2">
+                 <i class="fa-solid fa-pen-nib text-gold text-sm"></i>
+                {{ isEditing() ? 'Edit Your Review' : 'Write a Review' }}
+              </h3>
+              
+              <div class="mb-5">
+                <label for="rating" class="block mb-2 text-sm font-medium text-light">Rating (1-5)</label>
+                <div class="flex gap-1.5">
+                  @for (star of [1, 2, 3, 4, 5]; track star) {
+                    <button 
+                      type="button"
+                      (click)="reviewForm.patchValue({rating: star})"
+                      class="text-2xl transition-transform hover:scale-110 active:scale-95"
+                      [class.text-gold]="star <= (reviewForm.get('rating')?.value ?? 0)"
+                      [class.text-muted]="star > (reviewForm.get('rating')?.value ?? 0)"
+                      [class.opacity-40]="star > (reviewForm.get('rating')?.value ?? 0)"
+                    >
+                      <i class="fa-solid fa-star"></i>
+                    </button>
+                  }
+                </div>
+              </div>
+              
+              <div class="mb-6">
+                <label for="comment" class="block mb-2 text-sm font-medium text-light">Your Comment</label>
+                <textarea id="comment" rows="4" formControlName="comment" class="form-input w-full block rounded-lg bg-card" placeholder="What did you think of this book?" required></textarea>
+              </div>
+
+              <div class="flex gap-3">
+                <button type="submit" [disabled]="reviewForm.invalid" class="btn-ghost disabled:opacity-50 disabled:cursor-not-allowed">
+                  {{ isEditing() ? 'Update Review' : 'Submit Review' }}
+                </button>
+                @if (isEditing()) {
+                  <button type="button" (click)="cancelEdit()" class="px-5 py-2 text-muted hover:text-white transition-colors">
+                    Cancel
+                  </button>
+                }
+              </div>
+            </form>
+
+            <!-- Reviews List -->
+            <div class="space-y-4">
+              @for (review of reviews(); track review.id) {
+                <div class="bg-surface p-5 rounded-xl border border-line hover:border-line/80 transition-colors">
+                  <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-card border border-line text-gold flex items-center justify-center font-serif text-lg shadow-sm">
+                        {{ review.user.firstName.charAt(0) }}
+                      </div>
+                      <div>
+                        <span class="font-medium text-white block leading-tight">{{ review.user.firstName }} {{ review.user.lastName }}</span>
+                        <span class="text-[0.75rem] text-muted">{{ review.createdAt | date:'mediumDate' }}</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2">
+                       @if (canEdit(review)) {
+                         <button (click)="startEdit(review)" class="w-8 h-8 rounded-full bg-card border border-line flex items-center justify-center text-muted hover:text-gold hover:border-gold transition-colors" title="Edit Review">
+                           <i class="fa-solid fa-pen-to-square text-xs"></i>
+                         </button>
+                       }
+                       @if (canDelete(review)) {
+                         <button (click)="deleteReview(review.id)" class="w-8 h-8 rounded-full bg-card border border-line flex items-center justify-center text-muted hover:text-red-400 hover:border-red-400/50 transition-colors" title="Delete Review">
+                           <i class="fa-solid fa-trash text-xs"></i>
+                         </button>
+                       }
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center mb-3 gap-0.5">
+                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                      <i class="fa-solid fa-star text-[0.8rem]" [class.text-gold]="star <= review.rating" [class.text-muted]="star > review.rating" [class.opacity-30]="star > review.rating"></i>
+                    }
+                  </div>
+                  
+                  <p class="text-[0.95rem] text-light leading-relaxed">
+                    {{ review.comment }}
+                  </p>
+                </div>
+              }
+              
+              @if (reviews().length === 0) {
+                <div class="text-center py-10 bg-surface rounded-xl border border-line">
+                  <p class="text-muted italic">No reviews yet. Be the first to share your thoughts!</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (!isLoading() && !currentBook) {
+      <!-- Fallback when book REALLY not found -->
+      <div class="text-center py-20 border border-line bg-card rounded-2xl">
+        <div class="text-6xl mb-6 text-muted opacity-50">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <h2 class="mb-3 text-3xl font-serif tracking-tight text-white">Book Not Found</h2>
+        <p class="font-light text-muted mb-8">Sorry, we couldn't find the book you were looking for.</p>
+        <a routerLink="/books" class="btn-ghost inline-flex">
+          <i class="fa-solid fa-arrow-left me-2"></i>
+          Back to all books
+        </a>
+      </div>
+    }
+
+    @if (isLoading()) {
+      <div class="flex flex-col justify-center items-center py-32">
+        <div class="animate-spin rounded-full h-12 w-12 border-[3px] border-surface border-t-gold mb-6"></div>
+        <p class="text-muted font-serif">Loading book details...</p>
+      </div>
+    }
+
+  </div>
+
+  <app-confirmation-modal
+    [isOpen]="isDeleteModalOpen()"
+    title="Delete Review"
+    message="Are you sure you want to delete this review? This action cannot be undone."
+    confirmText="Delete"
+    (confirmed)="confirmDelete()"
+    (cancelled)="closeDeleteModal()"
+  />
+</section>

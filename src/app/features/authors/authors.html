@@ -1,0 +1,74 @@
+<!-- Authors Section -->
+<section class="py-12 antialiased min-h-screen">
+  <div class="max-w-[1280px] px-8 mx-auto w-full">
+    <div class="mb-10 border-b border-line pb-6 flex flex-col md:flex-row items-baseline justify-between gap-4">
+      <div>
+         <h1 class="text-3xl font-serif text-white sm:text-4xl tracking-wide">Authors</h1>
+         <p class="mt-2 text-md text-muted">Meet the brilliant minds behind your favorite books.</p>
+      </div>
+    </div>
+
+    <!-- Filters Area -->
+    <div class="mb-10 flex justify-center w-full max-w-2xl mx-auto">
+      <input 
+        type="text" 
+        placeholder="Search by author name..." 
+        class="form-input w-full"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)">
+    </div>
+
+    @if (isLoading()) {
+      <div class="flex justify-center items-center py-24">
+        <div class="animate-spin rounded-full h-10 w-10 border-[3px] border-surface border-t-gold"></div>
+      </div>
+    } @else {
+      <!-- Authors Grid -->
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (author of filteredAuthors() | paginate: { id: 'authorsControl', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track author.id) {
+          <div class="rounded-xl border border-line bg-card p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col items-center text-center">
+            
+            <!-- Author Avatar -->
+            <div class="w-24 h-24 rounded-full bg-surface border-2 border-line flex items-center justify-center mb-5 shadow-md group-hover:border-gold transition-colors duration-300">
+              <span class="text-3xl font-serif text-gold group-hover:text-white transition-colors duration-300">{{ author.name.charAt(0) }}</span>
+            </div>
+  
+            <!-- Author Info -->
+            <h3 class="text-lg font-serif text-white mb-2 transition-colors hover:text-gold cursor-pointer">{{ author.name }}</h3>
+  
+            @if (author.bio) {
+              <p class="text-[0.85rem] text-muted line-clamp-3 mb-5 leading-relaxed">{{ author.bio }}</p>
+            } @else {
+              <p class="text-[0.85rem] text-muted italic mb-5">No biography available.</p>
+            }
+  
+            <a [routerLink]="['/authors', author.id]" class="mt-auto w-full btn-ghost py-2 flex justify-center items-center gap-2">
+              <i class="fa-solid fa-book"></i>
+              View Books
+            </a>
+          </div>
+        } @empty {
+          <div class="col-span-full py-24 bg-card rounded-2xl border border-line text-center">
+             <div class="text-5xl mb-4 text-muted opacity-50">
+               <i class="fa-solid fa-user-pen"></i>
+             </div>
+             <h3 class="text-xl text-white font-serif mb-2">No authors found.</h3>
+             <p class="text-muted">Try adjusting your search criteria.</p>
+          </div>
+        }
+      </div>
+  
+      @if (totalItems() > itemsPerPage) {
+        <div class="mt-12 flex justify-center w-full filter-pagination-wrapper">
+          <pagination-controls 
+            id="authorsControl" 
+            class="my-pagination"
+            (pageChange)="goToPage($event)"
+            previousLabel=""
+            nextLabel="">    
+          </pagination-controls>
+        </div>
+      }
+    }
+  </div>
+</section>

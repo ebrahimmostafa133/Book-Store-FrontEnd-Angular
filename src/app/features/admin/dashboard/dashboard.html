@@ -1,1 +1,66 @@
-<p>dashboard works!</p>
+<section class="p-6 md:p-8 space-y-8 bg-background-light dark:bg-background-dark font-display h-full">
+  <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+    <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">System Overview</h2>
+  </div>
+
+
+
+  @if (isLoading) {
+    <div class="flex flex-col justify-center items-center py-24">
+      <div class="animate-spin rounded-full h-12 w-12 border-[3px] border-slate-200 dark:border-slate-800 border-t-primary mb-6"></div>
+      <p class="text-slate-500 font-medium">Loading metrics...</p>
+    </div>
+  } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      
+      <!-- Total Books -->
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-shadow hover:shadow-md">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-lg">
+            <span class="material-symbols-outlined text-[1.4rem]">library_books</span>
+          </div>
+          <span class="text-[0.7rem] font-bold text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">+4.2%</span>
+        </div>
+        <h3 class="text-slate-500 text-sm font-medium">Total Books</h3>
+        <p class="text-3xl font-bold mt-1 tracking-tight text-slate-900 dark:text-white">{{ stats.books }}</p>
+      </div>
+
+      <!-- Active Authors -->
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-shadow hover:shadow-md">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-lg">
+            <span class="material-symbols-outlined text-[1.4rem]">person</span>
+          </div>
+          <span class="text-[0.7rem] font-bold text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">+12%</span>
+        </div>
+        <h3 class="text-slate-500 text-sm font-medium">Active Authors</h3>
+        <p class="text-3xl font-bold mt-1 tracking-tight text-slate-900 dark:text-white">{{ stats.authors }}</p>
+      </div>
+
+      <!-- Categories -->
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-shadow hover:shadow-md">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 rounded-lg">
+            <span class="material-symbols-outlined text-[1.4rem]">category</span>
+          </div>
+          <span class="text-[0.7rem] font-bold text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">+1.5%</span>
+        </div>
+        <h3 class="text-slate-500 text-sm font-medium">Categories</h3>
+        <p class="text-3xl font-bold mt-1 tracking-tight text-slate-900 dark:text-white">{{ stats.categories }}</p>
+      </div>
+
+      <!-- Total Orders -->
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-shadow hover:shadow-md">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-lg">
+            <span class="material-symbols-outlined text-[1.4rem]">shopping_cart</span>
+          </div>
+          <span class="text-[0.7rem] font-bold text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">+8.5%</span>
+        </div>
+        <h3 class="text-slate-500 text-sm font-medium">Total Orders</h3>
+        <p class="text-3xl font-bold mt-1 tracking-tight text-slate-900 dark:text-white">{{ stats.orders }}</p>
+      </div>
+
+    </div>
+  }
+</section>

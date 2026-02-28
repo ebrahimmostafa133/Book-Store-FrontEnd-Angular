@@ -1,0 +1,45 @@
+@if (isOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div 
+      class="fixed inset-0 bg-gray-900/50 dark:bg-gray-900/80 backdrop-blur-sm transition-opacity"
+      (click)="onCancel()"
+    ></div>
+
+    <!-- Modal Content -->
+    <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all border border-gray-100 dark:border-gray-700">
+      <div class="p-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="shrink-0 w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+            {{ title }}
+          </h3>
+        </div>
+        
+        <p class="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+          {{ message }}
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            (click)="onConfirm()"
+            class="flex-1 px-6 py-3 text-white font-semibold rounded-xl transition-all active:scale-95 shadow-lg shadow-red-500/20"
+            [class]="confirmColor"
+          >
+            {{ confirmText }}
+          </button>
+          <button
+            type="button"
+            (click)="onCancel()"
+            class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all active:scale-95"
+          >
+            {{ cancelText }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,1 +1,225 @@
-<p>manage-books works!</p>
+<section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-6">
+  <div class="flex justify-between items-center bg-card p-5 md:p-6 rounded-2xl shadow-sm border border-line">
+    <h2 class="text-2xl font-serif text-white tracking-wide">Manage Books</h2>
+    <button (click)="openModal()" class="btn-ghost py-2">
+      <i class="fa-solid fa-plus mr-2"></i> Add Book
+    </button>
+  </div>
+
+  <div class="relative overflow-x-auto shadow-sm border border-line rounded-2xl bg-card">
+    <table class="w-full text-sm text-left rtl:text-right text-muted">
+      <thead class="text-xs text-light uppercase bg-surface border-b border-line">
+        <tr>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Book Cover</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Title</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Author</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Category</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Price</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Stock</th>
+          <th scope="col" class="px-6 py-5 font-semibold tracking-wider text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-line">
+        @for (book of displayBooks() | paginate: { id: 'adminBooks', itemsPerPage: itemsPerPage, currentPage: currentPage(), totalItems: totalItems() }; track book?.id || $index) {
+          @if (book) {
+            <tr class="bg-card hover:bg-surface/50 transition-colors duration-200">
+              <td class="px-6 py-4">
+                @if (book.bookCover) {
+                  <img [src]="book.bookCover" alt="{{ book.name }}" class="w-16 h-24 object-cover rounded-lg shadow-sm border border-line">
+                } @else {
+                  <div class="w-16 h-24 bg-surface rounded-lg border border-line flex items-center justify-center text-muted">
+                    <i class="fa-solid fa-image text-2xl opacity-50"></i>
+                  </div>
+                }
+              </td>
+              <td class="px-6 py-4 font-serif font-medium text-white whitespace-nowrap text-[1.05rem]">
+                {{ book?.name }}
+              </td>
+              <td class="px-6 py-4">
+                {{ book?.author?.name }}
+              </td>
+              <td class="px-6 py-4">
+                <span class="px-2.5 py-1 bg-surface border border-line rounded-full text-[0.75rem] font-medium text-light uppercase tracking-wider">
+                  {{ book?.category?.name }}
+                </span>
+              </td>
+              <td class="px-6 py-4 font-bold text-gold">
+                {{ book?.price }}
+              </td>
+              <td class="px-6 py-4">
+                <span [class]="book.stock > 10 ? 'text-emerald-400' : (book.stock > 0 ? 'text-orange-400' : 'text-red-400')" class="font-medium">
+                  {{ book?.stock }}
+                </span>
+              </td>
+              <td class="px-6 py-4 flex items-center justify-end gap-3 mt-4">
+                <button (click)="openModal(book!)" class="text-muted hover:text-gold transition-colors w-8 h-8 rounded-full bg-surface border border-line flex items-center justify-center" title="Edit">
+                   <i class="fa-solid fa-pen-to-square text-[0.85rem]"></i>
+                </button>
+                <button (click)="deleteBook(book!.id)" class="text-muted hover:text-red-400 hover:border-red-400/50 transition-colors w-8 h-8 rounded-full bg-surface border border-line flex items-center justify-center" title="Delete">
+                  <i class="fa-solid fa-trash-can text-[0.85rem]"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        } @empty {
+          <tr>
+            <td colspan="7" class="px-6 py-12 text-center text-muted italic">
+               <i class="fa-solid fa-book-open block text-3xl mb-3 opacity-50"></i>
+              No books found.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="flex justify-center mt-6 w-full filter-pagination-wrapper">
+    <pagination-controls 
+      id="adminBooks" 
+      class="my-pagination"
+      (pageChange)="onPageChange($event)"
+      previousLabel=""
+      nextLabel="">
+    </pagination-controls>
+  </div>
+</section>
+
+@if (isModalOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto bg-ink/80 backdrop-blur-sm">
+    <div class="relative w-full max-w-2xl bg-card rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-line custom-scrollbar max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between p-6 border-b border-line bg-surface rounded-t-2xl relative overflow-hidden sticky top-0 z-20">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gold/5 blur-3xl rounded-full"></div>
+        <h3 class="text-xl font-serif text-white tracking-wide relative z-10">
+          <i class="fa-solid fa-book-medical text-gold mr-2"></i> {{ editingBookId ? 'Edit Book' : 'Add New Book' }}
+        </h3>
+        <button (click)="closeModal()" type="button" class="text-muted hover:text-white transition-colors bg-card border border-line w-8 h-8 rounded-full flex items-center justify-center relative z-10">
+           <i class="fa-solid fa-xmark"></i>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+
+      <form [formGroup]="bookForm" (ngSubmit)="onSubmit()" class="p-6">
+        <div class="grid gap-6 mb-6 md:grid-cols-2">
+          
+          <div class="md:col-span-2">
+            <label for="name" class="block mb-2 text-[0.95rem] font-medium text-light">Title <span class="text-gold">*</span></label>
+            <input type="text" id="name" formControlName="name" class="form-input w-full" placeholder="Type book title">
+            @if (bookForm.get('name')?.invalid && bookForm.get('name')?.touched) {
+              <p class="text-red-400 text-xs mt-2 flex items-center font-medium">
+                 <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Title is required (min 3 chars).
+              </p>
+            }
+          </div>
+
+          <div>
+            <label for="author" class="block mb-2 text-[0.95rem] font-medium text-light">Author <span class="text-gold">*</span></label>
+            <div class="relative">
+              <select id="author" formControlName="author" class="form-input w-full appearance-none pr-10">
+                <option value="" disabled selected>Select author</option>
+                @for (author of authors(); track author.id) {
+                  <option [value]="author.id">{{ author.name }}</option>
+                }
+              </select>
+               <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none text-sm"></i>
+            </div>
+            @if (bookForm.get('author')?.invalid && bookForm.get('author')?.touched) {
+               <p class="text-red-400 text-xs mt-2 flex items-center font-medium">
+                 <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Author is required.
+              </p>
+            }
+          </div>
+
+          <div>
+             <label for="category" class="block mb-2 text-[0.95rem] font-medium text-light">Category <span class="text-gold">*</span></label>
+            <div class="relative">
+              <select id="category" formControlName="category" class="form-input w-full appearance-none pr-10">
+                <option value="" disabled selected>Select category</option>
+                @for (category of categories(); track category.id) {
+                  <option [value]="category.id">{{ category.name }}</option>
+                }
+              </select>
+               <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none text-sm"></i>
+            </div>
+            @if (bookForm.get('category')?.invalid && bookForm.get('category')?.touched) {
+               <p class="text-red-400 text-xs mt-2 flex items-center font-medium">
+                 <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Category is required.
+              </p>
+            }
+          </div>
+
+          <div>
+            <label for="price" class="block mb-2 text-[0.95rem] font-medium text-light">Price <span class="text-gold">*</span></label>
+            <div class="relative">
+               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
+              <input type="number" id="price" formControlName="price" class="form-input w-full pl-8" placeholder="0.00">
+            </div>
+            @if (bookForm.get('price')?.invalid && bookForm.get('price')?.touched) {
+              <p class="text-red-400 text-xs mt-2 flex items-center font-medium">
+                 <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Price must be a positive number.
+              </p>
+            }
+          </div>
+
+          <div>
+            <label for="stock" class="block mb-2 text-[0.95rem] font-medium text-light">Stock <span class="text-gold">*</span></label>
+            <input type="number" id="stock" formControlName="stock" class="form-input w-full" placeholder="0">
+            @if (bookForm.get('stock')?.invalid && bookForm.get('stock')?.touched) {
+              <p class="text-red-400 text-xs mt-2 flex items-center font-medium">
+                 <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Stock must be a non-negative integer.
+              </p>
+            }
+          </div>
+
+          <div class="md:col-span-2">
+            <label for="bookCover" class="block mb-2 text-[0.95rem] font-medium text-light">Book Cover <span class="text-gold">*</span></label>
+            <div class="relative">
+              <input type="file" id="bookCover" (change)="onFileSelected($event)" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+              <div class="flex items-center gap-4 bg-surface border border-dashed border-line rounded-xl p-4 transition-colors hover:border-gold/50">
+                <div class="w-12 h-12 bg-card rounded-lg flex items-center justify-center border border-line text-muted">
+                  <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                </div>
+                <div>
+                   <p class="text-sm font-medium text-white mb-0.5">Click to upload or drag and drop</p>
+                   <p class="text-xs text-muted">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+                </div>
+              </div>
+            </div>
+            @if (bookForm.get('bookCover')?.invalid && bookForm.get('bookCover')?.touched) {
+              <p class="text-red-400 text-xs mt-2 flex items-center font-medium">
+                 <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Book cover is required.
+              </p>
+            }
+          </div>
+
+          <div class="md:col-span-2">
+            <label for="description" class="block mb-2 text-[0.95rem] font-medium text-light">Description</label>
+            <textarea id="description" formControlName="description" rows="5" class="form-input w-full" placeholder="Write book description here"></textarea>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-6 border-t border-line mt-6">
+           <button type="button" (click)="closeModal()" class="px-6 py-2.5 text-muted hover:text-white transition-colors font-medium">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="bookForm.invalid || isLoading" class="btn-ghost disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]">
+            @if(isLoading) {
+               <i class="fa-solid fa-circle-notch fa-spin"></i>
+            } @else {
+              {{ editingBookId ? 'Update Book' : 'Add Book' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<app-confirmation-modal
+  [isOpen]="isConfirmModalOpen()"
+  title="Delete Book"
+  message="Are you sure you want to delete this book? This action cannot be undone."
+  confirmText="Delete"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+></app-confirmation-modal>

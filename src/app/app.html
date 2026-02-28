@@ -1,3 +1,7 @@
-<app-navbar></app-navbar>
+  <app-navbar></app-navbar>
+
 <router-outlet />
-<app-footer></app-footer>
+
+@if (!isAdminRoute()) {
+  <app-footer></app-footer>
+}

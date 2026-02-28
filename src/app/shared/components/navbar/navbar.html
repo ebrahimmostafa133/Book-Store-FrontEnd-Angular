@@ -1,1 +1,107 @@
-<p>navbar works!</p>
+<nav class="bg-nav-bg backdrop-blur-[18px] border-b border-line sticky top-0 z-50 px-8 transition-colors duration-350 ease-in-out">
+  <div class="max-w-[1280px] mx-auto h-[68px] flex items-center justify-between">
+    
+    <a routerLink="/home" class="flex items-center gap-2.5 font-serif text-2xl text-white tracking-[0.02em] no-underline">
+      <div class="w-8 h-8 bg-gold rounded-md grid place-items-center text-ink text-[14px]">
+        <i class="fa-solid fa-book-open"></i>
+      </div>
+      <div>Book<span class="text-gold">Store</span></div>
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <ul class="hidden md:flex gap-8 list-none m-0 p-0">
+        @if (isAdmin()) {
+          <li><a routerLink="/admin/dashboard" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Dashboard</a></li>
+          <li><a routerLink="/admin/books" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Manage Books</a></li>
+          <li><a routerLink="/admin/categories" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Manage Categories</a></li>
+          <li><a routerLink="/admin/authors" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Manage Authors</a></li>
+          <li><a routerLink="/admin/orders" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Manage Orders</a></li>
+        } @else {
+          <li><a routerLink="/books" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Books</a></li>
+          <li><a routerLink="/categories" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Categories</a></li>
+          <li><a routerLink="/authors" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Authors</a></li>
+          @if (isUser()){
+            <li><a routerLink="/allorders" (click)="closeMenus()" routerLinkActive="text-gold after:scale-x-100" class="text-muted text-[0.85rem] font-medium tracking-[0.06em] uppercase no-underline transition-colors hover:text-gold relative block py-2 after:content-[''] after:absolute after:bottom-1 after:left-0 after:right-0 after:h-[1px] after:bg-gold after:scale-x-0 after:transition-transform hover:after:scale-x-100">Orders</a></li>
+          }
+        }
+    </ul>
+
+    <!-- Actions Area -->
+    <div class="flex items-center gap-4 relative">
+      
+      <!-- Theme Switcher -->
+      <button class="theme-toggle" (click)="toggleTheme()" title="Toggle light/dark mode" aria-label="Toggle theme">
+        <div class="track-icons">
+          <i class="fa-solid fa-moon moon-icon"></i>
+          <i class="fa-solid fa-sun sun-icon"></i>
+        </div>
+        <div class="thumb"></div>
+      </button>
+
+      @if (isLoggedIn()) {
+        
+        @if (isUser()) {
+          <a routerLink="/cart" class="relative bg-transparent border-none text-muted text-[1.1rem] cursor-pointer p-1.5 transition-colors hover:text-gold">
+            <i class="fa-solid fa-cart-shopping"></i>
+            @if (cartCount() > 0) {
+              <span class="absolute top-0 right-0 transform translate-x-[40%] text-[10px] -translate-y-[40%] bg-gold text-ink font-bold w-4 h-4 rounded-full grid place-items-center">
+                {{ cartCount() }}
+              </span>
+            }
+          </a>
+        }
+        
+        @if (isUser()) {
+          <a routerLink="/profile" class="bg-transparent border-none text-muted text-[1.1rem] cursor-pointer p-1.5 transition-colors hover:text-gold" title="Profile">
+            <i class="fa-solid fa-circle-user"></i>
+          </a>
+        }
+        @if (isAdmin()) {
+          <a routerLink="/admin/profile" class="bg-transparent border-none text-muted text-[1.1rem] cursor-pointer p-1.5 transition-colors hover:text-gold" title="Profile">
+            <i class="fa-solid fa-circle-user"></i>
+          </a>
+        }
+        <button (click)="logout()" class="bg-transparent border-none text-[#e07070] text-[1.1rem] cursor-pointer p-1.5 transition-colors hover:text-red-500" title="Logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      } @else {
+        <div class="hidden md:flex gap-3">
+          <a routerLink="/login" (click)="closeMenus()" class="btn-ghost">Login</a>
+          <a routerLink="/register" (click)="closeMenus()" class="btn-gold py-2 w-auto mt-0">Register</a>
+        </div>
+      }
+
+      <button (click)="toggleMenu()" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-muted rounded-lg md:hidden hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-gold/50" aria-controls="navbar-menu" [attr.aria-expanded]="isMenuOpen">
+        <span class="sr-only">Open main menu</span>
+        <i class="fa-solid fa-bars text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Menu Container -->
+    @if (isMenuOpen) {
+      <div class="absolute top-[68px] left-0 right-0 md:hidden bg-card border-b border-line shadow-xl py-4" id="navbar-menu">
+        <ul class="flex flex-col font-medium p-4 mx-4 space-y-2 border border-line rounded-lg bg-surface">
+          @if (isAdmin()) {
+            <li><a routerLink="/admin/books" (click)="closeMenus()" class="block py-2 px-3 text-light hover:text-gold hover:bg-white/5 rounded">Manage Books</a></li>
+            <li><a routerLink="/admin/categories" (click)="closeMenus()" class="block py-2 px-3 text-light hover:text-gold hover:bg-white/5 rounded">Manage Categories</a></li>
+            <li><a routerLink="/admin/authors" (click)="closeMenus()" class="block py-2 px-3 text-light hover:text-gold hover:bg-white/5 rounded">Manage Authors</a></li>
+            <li><a routerLink="/admin/orders" (click)="closeMenus()" class="block py-2 px-3 text-light hover:text-gold hover:bg-white/5 rounded">Manage Orders</a></li>
+          } @else {
+            <li><a routerLink="/books" (click)="closeMenus()" class="block py-2 px-3 text-light hover:text-gold hover:bg-white/5 rounded">Books</a></li>
+            <li><a routerLink="/categories" (click)="closeMenus()" class="block py-2 px-3 text-light hover:text-gold hover:bg-white/5 rounded">Categories</a></li>
+            <li><a routerLink="/authors" (click)="closeMenus()" class="block py-2 px-3 text-light hover:text-gold hover:bg-white/5 rounded">Authors</a></li>
+            @if (isUser()){
+              <li><a routerLink="/allorders" (click)="closeMenus()" class="block py-2 px-3 text-light hover:text-gold hover:bg-white/5 rounded">Orders</a></li>
+            }
+          }
+          @if (!isLoggedIn()) {
+            <li class="pt-4 mt-4 border-t border-line flex flex-col gap-2">
+              <a routerLink="/login" (click)="closeMenus()" class="btn-ghost">Login</a>
+              <a routerLink="/register" (click)="closeMenus()" class="btn-gold mt-0">Register</a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+</nav>

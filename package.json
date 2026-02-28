@@ -41,6 +41,7 @@
     "jwt-decode": "^4.0.0",
     "ngx-cookie-service": "^21.1.0",
     "ngx-owl-carousel-o": "^21.0.0",
+    "ngx-pagination": "^6.0.3",
     "ngx-spinner": "^21.0.0",
     "ngx-toastr": "^20.0.5",
     "postcss": "^8.5.6",
