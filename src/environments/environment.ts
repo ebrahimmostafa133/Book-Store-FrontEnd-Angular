@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: 'https://api.example.com/api',
+  baseUrl: 'https://deluxe-quokka-30abfe.netlify.app/api',
 }

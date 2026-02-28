@@ -1,17 +1,34 @@
 import type {OnInit} from '@angular/core'
+import type {OwlOptions} from 'ngx-owl-carousel-o'
 import type {Book} from '../../core/interfaces/book.interface'
 import {CurrencyPipe} from '@angular/common'
 import {Component, inject, signal} from '@angular/core'
 import {RouterLink} from '@angular/router'
+import {CarouselModule} from 'ngx-owl-carousel-o'
 import {BooksService} from '../../core/services/books.service'
 
 @Component({
   selector: 'app-home',
-  imports: [CurrencyPipe, RouterLink],
+  imports: [CurrencyPipe, RouterLink, CarouselModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
+  mainOption: OwlOptions = {
+    loop: true,
+    mouseDrag: true,
+    touchDrag: true,
+    pullDrag: false,
+    dots: true,
+    navSpeed: 700,
+    navText: ['', ''],
+    items: 1,
+    nav: false,
+    autoplay: true,
+    autoplayTimeout: 2000,
+    autoplayHoverPause: true,
+  }
+
   private readonly booksService = inject(BooksService)
   books = signal<Book[]>([])
   isLoading = signal(true)

@@ -1,85 +1,25 @@
+
+<section class="bg-white dark:bg-gray-900 ">
 <!-- Hero Carousel Section -->
-<section class="relative w-full h-[500px] md:h-[600px] bg-slate-900" data-carousel="slide">
-  <!-- Carousel wrapper -->
-  <div class="relative h-full w-full overflow-hidden">
-    
-    <!-- Item 1 -->
-    <div class="hidden duration-700 ease-in-out h-full" data-carousel-item="active">
-      <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop" class="absolute block w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" alt="Library">
-      <!-- Overlay text -->
-      <div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center">
-        <div class="max-w-5xl mx-auto px-4 text-center font-display">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 text-white font-semibold text-sm mb-6 border border-primary/30 backdrop-blur-sm">
-            <span class="material-symbols-outlined text-[1.1rem]">auto_awesome</span>
-            <span>Discover Lumina Books</span>
-          </div>
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-6">
-            Your Next <span class="text-primary">Great Read</span> Awaits
-          </h1>
-          <p class="text-lg md:text-xl text-slate-200 mb-10 max-w-3xl mx-auto font-medium leading-relaxed">
-            Explore thousands of breathtaking stories ranging from thrilling fiction to insightful non-fiction. Find exactly what you're looking for with our curated collections.
-          </p>
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a routerLink="/books" class="w-full sm:w-auto px-8 py-3.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2">
-              Browse Collection
-              <span class="material-symbols-outlined text-[1.2rem]">arrow_forward</span>
-            </a>
-            <a routerLink="/categories" class="w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
-              Explore Categories
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Item 2 -->
-    <div class="hidden duration-700 ease-in-out h-full" data-carousel-item>
-      <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2000&auto=format&fit=crop" class="absolute block w-full h-full object-cover top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" alt="Books collection">
-      <div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center">
-        <div class="max-w-5xl mx-auto px-4 text-center font-display">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 text-white font-semibold text-sm mb-6 border border-primary/30 backdrop-blur-sm">
-            <span class="material-symbols-outlined text-[1.1rem]">menu_book</span>
-            <span>Curated Collections</span>
-          </div>
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-6">
-            Journey Through <span class="text-primary">Endless</span> Worlds
-          </h1>
-          <p class="text-lg md:text-xl text-slate-200 mb-10 max-w-3xl mx-auto font-medium leading-relaxed">
-            From classic masterpieces to contemporary bestsellers, our vast library has something perfect for every reader's palate. Let the adventure begin today.
-          </p>
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a routerLink="/books" class="w-full sm:w-auto px-8 py-3.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2">
-              Start Reading
-              <span class="material-symbols-outlined text-[1.2rem]">arrow_forward</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-  </div>
-  
-  <!-- Slider controls -->
-  <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
-    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-slate-800/30 group-hover:bg-white/50 dark:group-hover:bg-slate-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-slate-800/70 group-focus:outline-none transition-colors backdrop-blur-sm">
-      <svg class="w-4 h-4 text-white rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
-      </svg>
-      <span class="sr-only">Previous</span>
-    </span>
-  </button>
-  <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-slate-800/30 group-hover:bg-white/50 dark:group-hover:bg-slate-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-slate-800/70 group-focus:outline-none transition-colors backdrop-blur-sm">
-      <svg class="w-4 h-4 text-white rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-      </svg>
-      <span class="sr-only">Next</span>
-    </span>
-  </button>
+<section class="bg-white dark:bg-gray-900 ">
+  <owl-carousel-o [options]="mainOption">
+    <ng-template carouselSlide>
+      <img src="1.png" alt="Library" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+    </ng-template>
+    <ng-template carouselSlide>
+      <img src="2.png" alt="Books Collection" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+    </ng-template>  
+    <ng-template carouselSlide>
+      <img src="3.png" alt="Reading" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+    </ng-template>  
+    <ng-template carouselSlide>
+      <img src="library1.webp" alt="Bookstore" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+    </ng-template>
+  </owl-carousel-o>
 </section>
 
 <!-- Featured Books Section -->
-<section class="py-16 md:py-24 antialiased bg-white dark:bg-transparent transition-colors duration-300">
+<section class="py-16 md:py-24 antialiased bg-white dark:bg-transparent transition-colors duration-300 border-t border-slate-200 dark:border-slate-800">
   <div class="max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto w-full">
     <div class="mb-10 flex items-center justify-between">
       <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Trending Books</h2>
@@ -142,4 +82,6 @@
       </div>
     }
   </div>
+</section>  
 </section>
+
