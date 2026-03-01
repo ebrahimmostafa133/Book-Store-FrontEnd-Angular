@@ -5,6 +5,7 @@ import {CurrencyPipe} from '@angular/common'
 import {Component, inject, signal} from '@angular/core'
 import {RouterLink} from '@angular/router'
 import {CarouselModule} from 'ngx-owl-carousel-o'
+import {forkJoin} from 'rxjs'
 import {BooksService} from '../../core/services/books.service'
 
 @Component({
@@ -57,23 +58,19 @@ export class Home implements OnInit {
   isLoading = signal(true)
 
   ngOnInit(): void {
-    // Get all books, sort them by rating (highest first), and keep only the top 8 for the "Trending" section
-    this.booksService.getAllBooks().subscribe({
+    this.isLoading.set(true)
+
+    forkJoin({
+      trending: this.booksService.getAllBooks(1, 8, '-averageRating'),
+      newest: this.booksService.getAllBooks(1, 8, '-createdAt'),
+    }).subscribe({
       next: (res) => {
-        this.books.set(
-          res.data
-            .sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
-            .slice(0, 8),
-        )
-        this.books_by_newest.set(
-          res.data
-            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
-            .slice(0, 10),
-        )
+        this.books.set(res.trending.data)
+        this.books_by_newest.set(res.newest.data)
         this.isLoading.set(false)
       },
       error: (err) => {
-        console.error('Error fetching trending books', err)
+        console.error('Error fetching home page books', err)
         this.isLoading.set(false)
       },
     })
