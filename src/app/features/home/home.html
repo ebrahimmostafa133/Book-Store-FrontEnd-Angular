@@ -1,35 +1,115 @@
 
 <section class="bg-white dark:bg-gray-900 ">
-<!-- Hero Carousel Section -->
-<section class="bg-white dark:bg-gray-900 relative">
-  <owl-carousel-o [options]="mainOption">
-    <ng-template carouselSlide>
-      <img src="1.png" alt="Library" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
-    </ng-template>
-    <ng-template carouselSlide>
-      <img src="2.png" alt="Books Collection" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
-    </ng-template>
-    <ng-template carouselSlide>
-      <img src="3.png" alt="Reading" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
-    </ng-template>
-    <ng-template carouselSlide>
-      <img src="library1.webp" alt="Bookstore" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
-    </ng-template>
-  </owl-carousel-o>
-  
-  <div class="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
-    <div class="pointer-events-auto flex flex-col sm:flex-row gap-4 mt-20">
-      <a routerLink="/books" class="px-8 py-3.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-[1.2rem]">menu_book</span>
-        View Books
-      </a>
-      <a routerLink="/categories" class="px-8 py-3.5 bg-white/20 hover:bg-white/30 text-white backdrop-blur-md rounded-xl font-bold transition-colors border border-white/30 flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-[1.2rem]">category</span>
-        View Categories
-      </a>
+  <!-- Hero Carousel Section -->
+  <section class="bg-white dark:bg-gray-900 relative">
+    <owl-carousel-o [options]="mainOption">
+      <ng-template carouselSlide>
+        <img src="1.png" alt="Library" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+      </ng-template>
+      <ng-template carouselSlide>
+        <img src="2.png" alt="Books Collection" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+      </ng-template>
+      <ng-template carouselSlide>
+        <img src="3.png" alt="Reading" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+      </ng-template>
+      <ng-template carouselSlide>
+        <img src="library1.webp" alt="Bookstore" class="w-full h-[500px] md:h-[600px] object-cover shadow-md dark:shadow-gray-800">
+      </ng-template>
+    </owl-carousel-o>
+    
+    <div class="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
+      <div class="pointer-events-auto flex flex-col sm:flex-row gap-4 mt-20">
+        <a routerLink="/books" class="px-8 py-3.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[1.2rem]">menu_book</span>
+          View Books
+        </a>
+        <a routerLink="/categories" class="px-8 py-3.5 bg-white/20 hover:bg-white/30 text-white backdrop-blur-md rounded-xl font-bold transition-colors border border-white/30 flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[1.2rem]">category</span>
+          View Categories
+        </a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- Newest Books Section -->
+  <section class="py-16 bg-white dark:bg-slate-800/40 border-y border-slate-200 dark:border-slate-800">
+    <div class="w-full max-w-[1920px] px-4 md:px-8 lg:px-12 mx-auto">
+      <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="ml-8 md:ml-16 lg:ml-24">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+            </span>
+            <span class="text-rose-500 font-bold tracking-wider uppercase text-sm">Fresh Arrivals</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Newest Books</h2>
+        </div>
+        <a routerLink="/books" class="mr-8 md:mr-16 lg:mr-24 text-sm font-semibold text-primary transition-all hover:text-white group flex items-center gap-2 bg-primary/10 hover:bg-primary px-5 py-2.5 rounded-xl border border-primary/20 hover:shadow-lg hover:shadow-primary/30">
+          Explore All New <span class="material-symbols-outlined text-[1.1rem] transition-transform group-hover:translate-x-1">arrow_forward</span>
+        </a>
+      </div>
+      
+      <div class="relative">
+        <owl-carousel-o [options]="bookOptions">
+          @for (book of books_by_newest(); track book.id) {
+            <ng-template carouselSlide>
+              <div class="group mx-2.5 relative flex flex-col h-full rounded-2xl bg-white dark:bg-slate-900 shadow-sm hover:shadow-xl hover:shadow-primary/10 border border-slate-200 dark:border-slate-800 transition-all duration-500 overflow-hidden cursor-pointer">
+                
+                <!-- Image Container -->
+                <div class="relative h-[280px] w-full overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0">
+                  <a [routerLink]="['/details', book.id]" class="block h-full w-full">
+                    <img [src]="book.bookCover" [alt]="book.name" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110">
+                  </a>
+                  
+                  <!-- Badges -->
+                  <div class="absolute top-3 left-3 flex flex-col gap-2 z-10">
+                    <span class="bg-rose-500 text-white text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-rose-500/30">New</span>
+                  </div>
+                  
+                  <div class="absolute top-3 right-3 z-10">
+                    <span class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-300 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg border border-slate-200 dark:border-slate-700">{{ book.category.name }}</span>
+                  </div>
+                  
+                  <!-- Hover Overlay -->
+                  <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out flex justify-between items-end z-10">
+                    <p class="text-white font-extrabold text-xl">{{ book.price | currency }}</p>
+                    <a [routerLink]="['/details', book.id]" class="bg-primary hover:bg-primary/90 text-white rounded-full p-2.5 shadow-lg shadow-primary/40 transition-transform hover:scale-110 flex items-center justify-center">
+                      <span class="material-symbols-outlined text-[1.2rem]">visibility</span>
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="flex flex-col flex-grow p-5 md:p-6 bg-white dark:bg-slate-900">
+                  <a [routerLink]="['/details', book.id]" class="block mb-2 min-h-[3rem] md:min-h-[3.5rem]">
+                    <h3 class="text-lg md:text-xl font-bold leading-tight text-slate-900 dark:text-white transition-colors group-hover:text-primary line-clamp-2" [title]="book.name">{{ book.name }}</h3>
+                  </a>
+                  
+                  <p class="text-[0.9rem] font-medium text-slate-500 dark:text-slate-400 mb-5 line-clamp-1">by <span class="text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{{ book.author.name }}</span></p>
+
+                  <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 rounded-lg px-2 py-1">
+                      <span class="material-symbols-outlined text-amber-500 text-[1.1rem]">star</span>
+                      <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ book.averageRating || 'New' }}</span>
+                    </div>
+                    
+                    <a [routerLink]="['/details', book.id]" class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors flex items-center gap-1">
+                       Details <span class="material-symbols-outlined text-[1rem] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">chevron_right</span>
+                    </a>
+                  </div>
+                </div>
+                
+              </div>
+            </ng-template>
+          }
+        </owl-carousel-o>
+      </div>
+    </div>
+  </section>
+
+
+
 
 <!-- Featured Books Section -->
 <section class="py-16 md:py-24 antialiased bg-white dark:bg-transparent transition-colors duration-300 border-t border-slate-200 dark:border-slate-800">

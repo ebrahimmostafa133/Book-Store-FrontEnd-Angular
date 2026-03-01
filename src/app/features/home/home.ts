@@ -29,8 +29,31 @@ export class Home implements OnInit {
     autoplayHoverPause: true,
   }
 
+  bookOptions: OwlOptions = {
+    loop: true,
+    mouseDrag: true,
+    touchDrag: true,
+    pullDrag: true,
+    dots: true,
+    navSpeed: 700,
+    margin: 10,
+    navText: ['<span class="material-symbols-outlined">chevron_left</span>', '<span class="material-symbols-outlined">chevron_right</span>'],
+    responsive: {
+      0: {items: 1},
+      400: {items: 2},
+      740: {items: 3},
+      1000: {items: 4},
+      1280: {items: 6},
+    },
+    nav: false,
+    autoplay: true,
+    autoplayTimeout: 3000,
+    autoplayHoverPause: true,
+  }
+
   private readonly booksService = inject(BooksService)
   books = signal<Book[]>([])
+  books_by_newest = signal<Book[]>([])
   isLoading = signal(true)
 
   ngOnInit(): void {
@@ -41,6 +64,11 @@ export class Home implements OnInit {
           res.data
             .sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
             .slice(0, 8),
+        )
+        this.books_by_newest.set(
+          res.data
+            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+            .slice(0, 10),
         )
         this.isLoading.set(false)
       },

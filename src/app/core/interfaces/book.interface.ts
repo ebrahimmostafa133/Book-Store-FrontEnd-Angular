@@ -14,4 +14,5 @@ export interface Book {
   averageRating?: number
   numReviews?: number
   reviews?: Review[]
+  createdAt?: any
 }
