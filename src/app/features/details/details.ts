@@ -39,6 +39,7 @@ export class Details implements OnInit {
   })
 
   reviews = signal<Review[]>([])
+  isAdmin = computed(() => this.authService.userRole === 'admin')
   isEditing = signal(false)
   editingReviewId = signal<string | null>(null)
 
@@ -186,5 +187,6 @@ export class Details implements OnInit {
       return
     }
     this.cartService.addToCart(bookId, 1)
+    this.toastr.success('Book added to cart successfully!')
   }
 }
