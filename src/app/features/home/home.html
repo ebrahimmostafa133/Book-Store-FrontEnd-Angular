@@ -68,7 +68,7 @@
                   </div>
                   
                   <div class="absolute top-3 right-3 z-10">
-                    <span class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-300 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg border border-slate-200 dark:border-slate-700">{{ book.category.name }}</span>
+                    <span class="bg-white dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-300 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg border border-slate-200 dark:border-slate-700">{{ book.category.name }}</span>
                   </div>
                   
                   <!-- Hover Overlay -->
@@ -130,7 +130,7 @@
             <a [routerLink]="['/details', book.id]">
               <img class="mx-auto h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" [src]="book.bookCover" [alt]="book.name" />
             </a>
-            <div class="absolute top-3 right-3 text-[0.7rem] font-bold text-slate-700 bg-white/90 backdrop-blur-md dark:bg-slate-900/90 dark:text-slate-300 px-3 py-1 rounded-full shadow-sm">
+            <div class="absolute top-3 right-3 text-[0.7rem] font-bold text-slate-700 bg-white backdrop-blur-md dark:bg-slate-900/90 dark:text-slate-300 px-3 py-1 rounded-full shadow-sm">
               {{ book.category.name }}
             </div>
           </div>

@@ -20,8 +20,15 @@ export class Navbar {
   isDropdownOpen = false
 
   ngOnInit(): void {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme') === 'light') {
-      document.documentElement.classList.add('light')
+    if (typeof localStorage !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme') || 'dark'
+      if (savedTheme === 'light') {
+        document.documentElement.classList.add('light')
+        document.documentElement.classList.remove('dark')
+      } else {
+        document.documentElement.classList.add('dark')
+        document.documentElement.classList.remove('light')
+      }
     }
 
     if (this.authService.isLoggedIn()) {
@@ -32,7 +39,15 @@ export class Navbar {
   public toggleTheme(): void {
     if (typeof document === 'undefined') { return }
     const root = document.documentElement
-    root.classList.toggle('light')
+    const isLight = root.classList.contains('light')
+    if (isLight) {
+      root.classList.remove('light')
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+      root.classList.add('light')
+    }
+
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark')
     }

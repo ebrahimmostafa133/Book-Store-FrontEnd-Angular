@@ -115,10 +115,10 @@
           <div>
             <label for="author" class="block mb-2 text-[0.95rem] font-medium text-light">Author <span class="text-gold">*</span></label>
             <div class="relative">
-              <select id="author" formControlName="author" class="form-input w-full appearance-none pr-10">
-                <option value="" disabled selected class="text-black dark:text-white">Select author</option>
+              <select id="author" formControlName="author" class="form-input w-full appearance-none pr-10 bg-card">
+                <option value="" disabled selected class="bg-card">Select author</option>
                 @for (author of authors(); track author.id) {
-                  <option [value]="author.id" class="text-black dark:text-white">{{ author.name }}</option>
+                  <option [value]="author.id" class="bg-card">{{ author.name }}</option>
                 }
               </select>
                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none text-sm"></i>
@@ -133,10 +133,10 @@
           <div>
              <label for="category" class="block mb-2 text-[0.95rem] font-medium text-light">Category <span class="text-gold">*</span></label>
             <div class="relative">
-              <select id="category" formControlName="category" class="form-input w-full appearance-none pr-10">
-                <option value="" disabled selected class="text-black dark:text-white">Select category</option>
+              <select id="category" formControlName="category" class="form-input w-full appearance-none pr-10 bg-card">
+                <option value="" disabled selected class="bg-card">Select category</option>
                 @for (category of categories(); track category.id) {
-                  <option [value]="category.id" class="text-black dark:text-white">{{ category.name }}</option>
+                  <option [value]="category.id" class="bg-card">{{ category.name }}</option>
                 }
               </select>
                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none text-sm"></i>
