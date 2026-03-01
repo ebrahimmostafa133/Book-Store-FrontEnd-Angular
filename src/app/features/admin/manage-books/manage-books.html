@@ -1,13 +1,13 @@
 <section class="p-4 sm:p-6 mb-8 mt-5 h-full space-y-6">
-  <div class="flex justify-between items-center bg-card p-5 md:p-6 rounded-2xl shadow-sm border border-line">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 bg-card p-5 md:p-6 rounded-2xl shadow-sm border border-line">
     <h2 class="text-2xl font-serif text-white tracking-wide">Manage Books</h2>
     <button (click)="openModal()" class="btn-ghost py-2">
       <i class="fa-solid fa-plus mr-2"></i> Add Book
     </button>
   </div>
 
-  <div class="relative overflow-x-auto shadow-sm border border-line rounded-2xl bg-card">
-    <table class="w-full text-sm text-left rtl:text-right text-muted">
+  <div class="relative overflow-x-auto shadow-sm border border-line rounded-2xl bg-card w-full">
+    <table class="w-full min-w-[900px] text-sm text-left rtl:text-right text-muted">
       <thead class="text-xs text-light uppercase bg-surface border-b border-line">
         <tr>
           <th scope="col" class="px-6 py-5 font-semibold tracking-wider">Book Cover</th>
@@ -116,9 +116,9 @@
             <label for="author" class="block mb-2 text-[0.95rem] font-medium text-light">Author <span class="text-gold">*</span></label>
             <div class="relative">
               <select id="author" formControlName="author" class="form-input w-full appearance-none pr-10">
-                <option value="" disabled selected>Select author</option>
+                <option value="" disabled selected class="text-black dark:text-white">Select author</option>
                 @for (author of authors(); track author.id) {
-                  <option [value]="author.id">{{ author.name }}</option>
+                  <option [value]="author.id" class="text-black dark:text-white">{{ author.name }}</option>
                 }
               </select>
                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none text-sm"></i>
@@ -134,9 +134,9 @@
              <label for="category" class="block mb-2 text-[0.95rem] font-medium text-light">Category <span class="text-gold">*</span></label>
             <div class="relative">
               <select id="category" formControlName="category" class="form-input w-full appearance-none pr-10">
-                <option value="" disabled selected>Select category</option>
+                <option value="" disabled selected class="text-black dark:text-white">Select category</option>
                 @for (category of categories(); track category.id) {
-                  <option [value]="category.id">{{ category.name }}</option>
+                  <option [value]="category.id" class="text-black dark:text-white">{{ category.name }}</option>
                 }
               </select>
                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none text-sm"></i>
